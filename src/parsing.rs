@@ -87,7 +87,7 @@ pub fn parse_group(iter: &mut Chars) -> Result<TokenVec, Box<dyn Error>> {
             }
         }?;
         debug!("ch token: {:?}", &t);
-        tokens.inner_mut().push(Box::from(t));
+        tokens.inner_mut().push(t);
         iter.next();
         if std::ptr::eq(&iter.as_str().as_bytes()[0], end) {
             break;
