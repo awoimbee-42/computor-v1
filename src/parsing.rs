@@ -68,7 +68,7 @@ pub fn parse_group(iter: &mut Chars) -> Result<TokenVec, Box<dyn Error>> {
     iter.next();
     debug!("Parse group: {}", slice);
 
-    let mut tokens: TokenVec = Vec::new();
+    let mut tokens = TokenVec::new();
 
     while let Some(ch) = iter.as_str().chars().next() {
         debug!("ch: {}, as_str: {}", ch, iter.as_str());
@@ -81,10 +81,13 @@ pub fn parse_group(iter: &mut Chars) -> Result<TokenVec, Box<dyn Error>> {
                 Ok(Token::Operator(*ALL_OPERATORS.get(&c).unwrap()))
             }
             '(' => parse_group(iter).map(|v| Token::Value(Value::Group(v))),
-            _ => Ok(Token::Value(Value::Float(4.))), //  panic!("pute {}", ch),
+            _ => {
+                debug!("Unhandled case !!!");
+                Ok(Token::Value(Value::Float(4.)))
+            }
         }?;
         debug!("ch token: {:?}", &t);
-        tokens.push(Box::from(t));
+        tokens.inner_mut().push(Box::from(t));
         iter.next();
         if std::ptr::eq(&iter.as_str().as_bytes()[0], end) {
             break;

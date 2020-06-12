@@ -13,6 +13,8 @@ mod types;
 #[derive(Debug, Default)]
 struct Config {
     is_tty: bool,
+    // float2real: bool, // TODO
+    // print_float: bool, // TODO
 }
 
 impl Config {
@@ -36,8 +38,8 @@ fn read_line(stdin: &mut dyn BufRead) -> Option<String> {
 
 fn calculate_line(line: String) {
     let tokens = parsing::parse_group(&mut line.chars()).unwrap();
-
     debug!("tokens:\n{:?}", tokens);
+    debug!("expr: {}", tokens);
 }
 
 fn main() {

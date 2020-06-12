@@ -2,9 +2,17 @@ use super::{Associativity, Operator};
 use crate::types::TokenVec;
 use log::debug;
 use std::error::Error;
+use std::fmt;
 
 #[derive(Debug)]
 pub struct Pow;
+
+impl fmt::Display for Pow {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "^")
+    }
+}
+
 impl Operator for Pow {
     fn sign() -> char {
         '^'

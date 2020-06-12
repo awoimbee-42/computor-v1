@@ -1,7 +1,7 @@
 use crate::types::TokenVec;
 use phf::phf_map;
 use std::error::Error;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 
 mod add;
 mod div;
@@ -16,7 +16,7 @@ use pow::Pow;
 use sub::Sub;
 
 // I really need associated const impls to work, or const impl to get implemented :/
-pub trait Operator: Debug + Sync {
+pub trait Operator: Debug + Sync + Display {
     fn sign() -> char
     where
         Self: Sized;
