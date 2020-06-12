@@ -21,7 +21,7 @@ impl Operator for Pow {
         Associativity::Right
     }
     fn precedence() -> u8 {
-        1
+        3
     }
     fn operate(group: TokenVec, id: usize) -> Result<usize, Box<dyn Error>> {
         debug!("{:?}{}", group, id);

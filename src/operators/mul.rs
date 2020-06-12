@@ -21,7 +21,7 @@ impl Operator for Mul {
         Associativity::Any
     }
     fn precedence() -> u8 {
-        1
+        2
     }
     fn operate(group: TokenVec, id: usize) -> Result<usize, Box<dyn Error>> {
         debug!("{:?}{}", group, id);
