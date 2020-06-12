@@ -4,13 +4,13 @@ use log::debug;
 use std::error::Error;
 
 #[derive(Debug)]
-pub struct Pow;
-impl Operator for Pow {
+pub struct Mul;
+impl Operator for Mul {
     fn sign() -> char {
-        '^'
+        '*'
     }
     fn associativity() -> Associativity {
-        Associativity::Right
+        Associativity::Any
     }
     fn precedence() -> u8 {
         1
