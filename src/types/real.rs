@@ -1,40 +1,125 @@
+use std::convert::From;
+use std::convert::TryFrom;
 use std::fmt;
 use std::ops;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Real {
-    num: u64,
-    denum: u64,
+    num: i64,
+    denum: i64,
 }
 impl Real {
-    pub fn new(numerator: u64, denumerator: u64) -> Self {
+    pub fn new(numerator: i64, denumerator: i64) -> Self {
         Real {
             num: numerator,
             denum: denumerator,
         }
     }
-    /// Create a Real number from a Relative one
-    pub fn from_rel(number: u64) -> Self {
-        Real {
-            num: number,
-            denum: 1,
-        }
+    fn simplify(mut self) -> Self {
+        let common_factor = gcd(self.num, self.denum);
+        self.num /= common_factor;
+        self.denum /= common_factor;
+        self
     }
 }
 
-impl ops::Add<f64> for Real {
-    type Output = f64;
-
-    fn add(self, rhs: f64) -> Self::Output {
-        let self_flt = self.num as f64 / self.denum as f64;
-        self_flt + rhs
-    }
-}
 impl fmt::Display for Real {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.denum {
             1 => write!(f, "{}", self.num),
             _ => write!(f, "({}/{})", self.num, self.denum),
         }
+    }
+}
+
+// Eq
+impl Eq for Real {}
+
+impl PartialEq for Real {
+    fn eq(&self, other: &Self) -> bool {
+        let simp_self = self.clone().simplify();
+        let simp_other = other.clone().simplify();
+        simp_self.num == simp_other.num && simp_self.denum == simp_other.denum
+    }
+}
+
+impl PartialEq<i64> for Real {
+    fn eq(&self, other: &i64) -> bool {
+        self.denum == 1 && self.num == *other
+    }
+}
+
+// From
+impl From<Real> for f64 {
+    fn from(real: Real) -> f64 {
+        real.num as f64 / real.denum as f64
+    }
+}
+
+impl From<i64> for Real {
+    fn from(value: i64) -> Real {
+        Real {
+            num: value,
+            denum: 1,
+        }
+    }
+}
+
+impl TryFrom<Real> for i64 {
+    type Error = &'static str;
+
+    fn try_from(value: Real) -> Result<Self, Self::Error> {
+        if value.denum != 1 {
+            Err("Fractional Real connot be converted to i64")
+        } else {
+            Ok(value.num)
+        }
+    }
+}
+
+// Operators
+impl ops::Add<f64> for Real {
+    type Output = f64;
+
+    fn add(self, rhs: f64) -> Self::Output {
+        f64::from(self) + rhs
+    }
+}
+
+impl ops::Add<Real> for Real {
+    type Output = Real;
+
+    fn add(self, rhs: Real) -> Self::Output {
+        let new_den = (self.denum * rhs.denum) / gcd(self.denum, rhs.denum);
+        let new_num = self.num * (new_den / self.denum) + rhs.num * (new_den / rhs.denum);
+        Real::new(new_num, new_den).simplify()
+    }
+}
+
+// Helpers
+fn gcd(mut a: i64, mut b: i64) -> i64 {
+    while a != 0 {
+        let tmp = a;
+        a = b % a;
+        b = tmp;
+    }
+    b
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_gcd() {
+        assert_eq!(gcd(10, 13), 1);
+        assert_eq!(gcd(2, 4), 2);
+        assert_eq!(gcd(40, 100), 20);
+        assert_eq!(gcd(4043634, 13242340), 2);
+    }
+    #[test]
+    fn test_eq() {
+        assert_eq!(Real::new(6, 4), Real::new(3, 2));
+        assert_eq!(Real::new(-6, 4), Real::new(-3, 2));
+        assert_eq!(Real::new(9, -99999), Real::new(1, -11111));
     }
 }

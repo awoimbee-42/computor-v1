@@ -53,9 +53,9 @@ fn parse_digits(iter: &mut Chars) -> Option<Value> {
             iter.next().unwrap();
         }
     }
-    if let Ok(i) = slice.parse() {
-        Some(Value::Real(Real::from_rel(i)))
-    } else if let Ok(f) = slice.parse() {
+    if let Ok(i) = slice.parse::<i64>() {
+        Some(Value::Real(Real::from(i)))
+    } else if let Ok(f) = slice.parse::<f64>() {
         Some(Value::Float(f))
     } else {
         None
