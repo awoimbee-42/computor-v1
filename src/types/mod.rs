@@ -1,3 +1,6 @@
+pub mod real;
+pub use real::Real;
+
 use crate::operators::Operator;
 
 // TO DO //
@@ -19,11 +22,11 @@ impl Expr {
 }
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "(");
+        write!(f, "(")?;
         for v in &self.formula {
             write!(f, "{}", v)?;
         }
-        write!(f, ")");
+        write!(f, ")")?;
         if let Some(equals) = &self.equals {
             write!(f, " = ")?;
             for v in equals {
@@ -87,35 +90,6 @@ impl fmt::Display for Value {
             Value::Var(v) => write!(f, "{}", v),
             Value::Real(r) => write!(f, "{}", r),
             Value::Float(f_) => write!(f, "{}", f_),
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct Real {
-    num: u64,
-    denum: u64,
-}
-impl Real {
-    pub fn new(numerator: u64, denumerator: u64) -> Self {
-        Real {
-            num: numerator,
-            denum: denumerator,
-        }
-    }
-    /// Create a Real number from a Relative one
-    pub fn from_rel(number: u64) -> Self {
-        Real {
-            num: number,
-            denum: 1,
-        }
-    }
-}
-impl fmt::Display for Real {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self.denum {
-            1 => write!(f, "{}", self.num),
-            _ => write!(f, "({}/{})", self.num, self.denum),
         }
     }
 }

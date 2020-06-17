@@ -14,16 +14,16 @@ impl fmt::Display for Mul {
 }
 
 impl Operator for Mul {
-    fn sign() -> char {
+    fn sign(&self) -> char {
         '*'
     }
-    fn associativity() -> Associativity {
+    fn associativity(&self) -> Associativity {
         Associativity::Any
     }
-    fn precedence() -> u8 {
+    fn precedence(&self) -> u8 {
         2
     }
-    fn operate(group: TokenVec, id: usize) -> Result<usize, Box<dyn Error>> {
+    fn operate(&self, group: &mut TokenVec, id: usize) -> Result<usize, Box<dyn Error>> {
         debug!("{:?}{}", group, id);
         Err("Not implemented (yet)".into())
     }

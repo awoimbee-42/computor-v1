@@ -17,18 +17,11 @@ use sub::Sub;
 
 // I really need associated const impls to work, or const impl to get implemented :/
 pub trait Operator: Debug + Sync + Display {
-    fn sign() -> char
-    where
-        Self: Sized;
-    fn associativity() -> Associativity
-    where
-        Self: Sized;
-    fn precedence() -> u8
-    where
-        Self: Sized;
-    fn operate(group: TokenVec, id: usize) -> Result<usize, Box<dyn Error>>
-    where
-        Self: Sized;
+    fn sign(&self) -> char;
+    fn associativity(&self) -> Associativity;
+    fn precedence(&self) -> u8;
+    // should operate return Option ?
+    fn operate(&self, group: &mut TokenVec, id: usize) -> Result<usize, Box<dyn Error>>;
 }
 // struct Op {
 //     trait: &'static dyn Operator,
