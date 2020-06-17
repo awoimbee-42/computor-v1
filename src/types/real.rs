@@ -13,7 +13,7 @@ impl Real {
         Real {
             num: numerator,
             denum: denumerator,
-        }
+        }.simplify()
     }
     fn simplify(mut self) -> Self {
         let common_factor = gcd(self.num, self.denum);
@@ -37,9 +37,7 @@ impl Eq for Real {}
 
 impl PartialEq for Real {
     fn eq(&self, other: &Self) -> bool {
-        let simp_self = self.clone().simplify();
-        let simp_other = other.clone().simplify();
-        simp_self.num == simp_other.num && simp_self.denum == simp_other.denum
+        self.num == other.num && self.denum == other.denum
     }
 }
 
@@ -121,5 +119,10 @@ mod tests {
         assert_eq!(Real::new(6, 4), Real::new(3, 2));
         assert_eq!(Real::new(-6, 4), Real::new(-3, 2));
         assert_eq!(Real::new(9, -99999), Real::new(1, -11111));
+        assert_eq!(Real::new(9, -99999), Real::new(-1, 11111));
+        assert_eq!(Real::new(-9, 99999), Real::new(-1, 11111));
+        assert_eq!(Real::new(-1, -1), Real::new(1, 1));
+        assert_eq!(Real::new(-9999, -3), Real::new(3333, 1));
+        assert_ne!(Real::new(1, 2), Real::new(1, 3));
     }
 }
