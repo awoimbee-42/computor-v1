@@ -1,5 +1,5 @@
 use super::{Associativity, Operator};
-use crate::types::TokenVec;
+use crate::types::Group;
 use log::debug;
 use std::error::Error;
 use std::fmt;
@@ -23,7 +23,7 @@ impl Operator for Div {
     fn precedence(&self) -> u8 {
         2
     }
-    fn operate(&self, group: &mut TokenVec, id: usize) -> Result<usize, Box<dyn Error>> {
+    fn operate(&self, group: &mut Group, id: usize) -> Result<usize, Box<dyn Error>> {
         debug!("{:?}{}", group, id);
         Err("Not implemented (yet)".into())
     }

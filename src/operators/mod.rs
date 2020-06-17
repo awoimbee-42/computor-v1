@@ -1,4 +1,4 @@
-use crate::types::TokenVec;
+use crate::types::Group;
 use phf::phf_map;
 use std::error::Error;
 use std::fmt::{Debug, Display};
@@ -21,7 +21,7 @@ pub trait Operator: Debug + Sync + Display {
     fn associativity(&self) -> Associativity;
     fn precedence(&self) -> u8;
     // should operate return Option ?
-    fn operate(&self, group: &mut TokenVec, id: usize) -> Result<usize, Box<dyn Error>>;
+    fn operate(&self, group: &mut Group, id: usize) -> Result<usize, Box<dyn Error>>;
 }
 // struct Op {
 //     trait: &'static dyn Operator,

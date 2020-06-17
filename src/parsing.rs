@@ -3,7 +3,7 @@ use std::error::Error;
 use std::str::Chars;
 
 use crate::operators::ALL_OPERATORS;
-use crate::types::{Real, Token, TokenVec, Value};
+use crate::types::{Real, Token, Group, Value};
 
 #[derive(Debug, Clone)]
 struct SyntaxError {
@@ -62,13 +62,13 @@ fn parse_digits(iter: &mut Chars) -> Option<Value> {
     }
 }
 
-pub fn parse_group(iter: &mut Chars) -> Result<TokenVec, Box<dyn Error>> {
+pub fn parse_group(iter: &mut Chars) -> Result<Group, Box<dyn Error>> {
     let slice = iter.as_str();
     let end = find_matching_prenthese(slice)?;
     iter.next();
     debug!("Parse group: {}", slice);
 
-    let mut tokens = TokenVec::new();
+    let mut tokens = Group::new();
 
     while let Some(ch) = iter.as_str().chars().next() {
         debug!("ch: {}, as_str: {}", ch, iter.as_str());

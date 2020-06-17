@@ -39,16 +39,16 @@ impl fmt::Display for Expr {
 // //
 
 #[derive(Debug)]
-pub struct TokenVec(Vec<Token>);
-impl TokenVec {
+pub struct Group(Vec<Token>);
+impl Group {
     pub fn new() -> Self {
-        TokenVec(Vec::new())
+        Group(Vec::new())
     }
     pub fn inner_mut(&mut self) -> &mut Vec<Token> {
         &mut self.0
     }
 }
-impl fmt::Display for TokenVec {
+impl fmt::Display for Group {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "(")?;
         for v in &self.0 {
@@ -75,7 +75,7 @@ impl fmt::Display for Token {
 
 #[derive(Debug)]
 pub enum Value {
-    Group(TokenVec),
+    Group(Group),
     // Fun(Fun), -> functions are groups
     Var(String),
     Real(Real),
@@ -97,5 +97,5 @@ impl fmt::Display for Value {
 pub struct Fun {
     name: String,
     vars: Vec<Value>,
-    inner: TokenVec,
+    inner: Group,
 }

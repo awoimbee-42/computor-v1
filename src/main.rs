@@ -10,7 +10,7 @@ mod operators;
 mod parsing;
 mod types;
 
-use types::TokenVec;
+use types::Group;
 
 #[derive(Debug, Default)]
 struct Config {
@@ -39,7 +39,7 @@ fn read_line(stdin: &mut dyn BufRead) -> Option<String> {
 }
 
 use types::Token;
-fn calculate_group(group: &mut TokenVec) -> Result<(), Box<dyn Error>> {
+fn calculate_group(group: &mut Group) -> Result<(), Box<dyn Error>> {
     debug!("Calculate group: {}", group);
 
     let mut broke_out = true;
