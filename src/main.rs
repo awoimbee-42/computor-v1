@@ -46,20 +46,16 @@ fn calculate_group(group: &mut TokenVec) -> Result<(), Box<dyn Error>> {
     while broke_out {
         broke_out = false;
         for (id, token) in group.inner_mut().iter_mut().enumerate() {
-            match token {
-                Token::Operator(o) => {
-                    if o.operate(group, id).is_ok() {
-                        broke_out = true;
-                        break;
-                    }
+            if let Token::Operator(o) = token {
+                if o.operate(group, id).is_ok() {
+                    broke_out = true;
                     break;
-                },
-                _ => ()
+                }
+                break;
             }
         }
     }
     Ok(())
-
 
     // // Calculate inner groups
     // for token in group.inner_mut().iter_mut() {
@@ -75,7 +71,6 @@ fn calculate_group(group: &mut TokenVec) -> Result<(), Box<dyn Error>> {
     //         _ => (),
     //     }
     // }
-
 }
 
 fn calculate_line(line: String) {

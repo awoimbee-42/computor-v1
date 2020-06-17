@@ -1,5 +1,5 @@
-use std::ops;
 use std::fmt;
+use std::ops;
 
 #[derive(Debug)]
 pub struct Real {
