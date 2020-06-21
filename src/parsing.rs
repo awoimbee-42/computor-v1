@@ -3,7 +3,7 @@ use std::error::Error;
 use std::str::Chars;
 
 use crate::operators::ALL_OPERATORS;
-use crate::types::{Real, Token, Group, Value};
+use crate::types::{Group, Real, Token, Value};
 
 #[derive(Debug, Clone)]
 struct SyntaxError {
@@ -87,7 +87,7 @@ pub fn parse_group(iter: &mut Chars) -> Result<Group, Box<dyn Error>> {
             }
         }?;
         debug!("ch token: {:?}", &t);
-        tokens.inner_mut().push(t);
+        tokens.push(t);
         iter.next();
         if std::ptr::eq(&iter.as_str().as_bytes()[0], end) {
             break;

@@ -13,7 +13,8 @@ impl Real {
         Real {
             num: numerator,
             denum: denumerator,
-        }.simplify()
+        }
+        .simplify()
     }
     fn simplify(mut self) -> Self {
         let common_factor = gcd(self.num, self.denum);

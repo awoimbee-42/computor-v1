@@ -45,7 +45,7 @@ fn calculate_group(group: &mut Group) -> Result<(), Box<dyn Error>> {
     let mut broke_out = true;
     while broke_out {
         broke_out = false;
-        for (id, token) in group.inner_mut().iter_mut().enumerate() {
+        for (id, token) in group.iter_mut().enumerate() {
             if let Token::Operator(o) = token {
                 if o.operate(group, id).is_ok() {
                     broke_out = true;
@@ -77,7 +77,8 @@ fn calculate_line(line: String) {
     let mut tokens = parsing::parse_group(&mut line.chars()).unwrap();
     debug!("tokens:\n{:?}", tokens);
     debug!("expr: {}", tokens);
-    calculate_group(&mut tokens).unwrap();
+    tokens.simplify();
+    // calculate_group(&mut tokens).unwrap();
 }
 
 fn main() {

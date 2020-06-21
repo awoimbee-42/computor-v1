@@ -1,4 +1,6 @@
+pub mod group;
 pub mod real;
+pub use group::Group;
 pub use real::Real;
 
 use crate::operators::Operator;
@@ -15,9 +17,6 @@ impl Expr {
             formula: Vec::new(),
             equals: None,
         }
-    }
-    pub fn inner_mut(&mut self) -> &mut Vec<Token> {
-        &mut self.formula
     }
 }
 impl fmt::Display for Expr {
@@ -38,28 +37,7 @@ impl fmt::Display for Expr {
 }
 // //
 
-#[derive(Debug)]
-pub struct Group(Vec<Token>);
-impl Group {
-    pub fn new() -> Self {
-        Group(Vec::new())
-    }
-    pub fn inner_mut(&mut self) -> &mut Vec<Token> {
-        &mut self.0
-    }
-}
-impl fmt::Display for Group {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "(")?;
-        for v in &self.0 {
-            write!(f, "{}", v)?;
-        }
-        write!(f, ")")?;
-        Ok(())
-    }
-}
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Token {
     Operator(&'static dyn Operator),
     Value(Value),
@@ -73,7 +51,7 @@ impl fmt::Display for Token {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Value {
     Group(Group),
     // Fun(Fun), -> functions are groups
@@ -93,7 +71,7 @@ impl fmt::Display for Value {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Fun {
     name: String,
     vars: Vec<Value>,
