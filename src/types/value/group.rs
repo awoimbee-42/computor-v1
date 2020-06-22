@@ -1,3 +1,4 @@
+use super::Value;
 use crate::types::Token;
 use log::debug;
 use std::fmt;
@@ -35,9 +36,16 @@ impl Group {
         }
     }
 
-    pub fn simplify(mut self) -> Self {
+    pub fn simplify(mut self) -> Value {
         self.simplify_ref();
-        self
+        if self.0.len() == 1 {
+            match self.0.pop().unwrap() {
+                Token::Value(v) => v,
+                _ => unreachable!(),
+            }
+        } else {
+            Value::Group(self)
+        }
     }
 }
 

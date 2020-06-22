@@ -1,6 +1,8 @@
+use super::tok2val;
 use super::{Associativity, Operator};
+use crate::types::value::Pow as lolpow;
 use crate::types::Group;
-use log::debug;
+use crate::types::Token;
 use std::error::Error;
 use std::fmt;
 
@@ -24,7 +26,21 @@ impl Operator for Pow {
         3
     }
     fn operate(&self, group: &mut Group, id: usize) -> Result<usize, Box<dyn Error>> {
-        debug!("{:?}{}", group, id);
-        Err("Not implemented (yet)".into())
+        // That's how I handle right associativity...
+        if let Some(Token::Operator(o)) = group.get(id + 2) {
+            if o.sign() == '^' {
+                return o.operate(group, id + 2);
+            }
+        }
+
+        let lft = tok2val(group[id - 1].clone());
+        let rgt = tok2val(group[id + 1].clone());
+
+        let res = lft.pow(rgt);
+        group[id] = Token::Value(res);
+        group.remove(id + 1);
+        group.remove(id - 1);
+
+        Ok(id - 1)
     }
 }

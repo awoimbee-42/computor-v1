@@ -112,3 +112,19 @@ impl ops::Div<Real> for Float {
         Self(self.0 / Float::from(rhs).0)
     }
 }
+use std::convert::TryFrom;
+impl super::Pow<Real> for Float {
+    type Output = Float;
+
+    fn pow(mut self, rhs: Real) -> Self::Output {
+        self.0 = self.0.powi(i64::try_from(rhs).unwrap() as i32);
+        self
+    }
+}
+impl super::Pow<Float> for Float {
+    type Output = Float;
+
+    fn pow(self, rhs: Float) -> Self::Output {
+        Float::from(self.powf(rhs.0))
+    }
+}

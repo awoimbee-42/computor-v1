@@ -35,43 +35,56 @@ impl From<Float> for Value {
     }
 }
 
-macro_rules! match_fuck {
+macro_rules! for_any_value {
     ($matched:ident, $name:ident, $what:expr) => {
         match $matched {
             // Value::Group($name) => $what,
             // Value::Var($name) => Value::from($what),
             Value::Real($name) => Value::from($what),
             Value::Float($name) => Value::from($what),
-            _ => panic!("sadd"),
+            _ => panic!("Operations aren't implemented for this type ({})", $matched),
         }
     };
+}
+
+pub trait Pow<T> {
+    type Output;
+
+    fn pow(self, rhs: T) -> Self::Output;
 }
 
 impl std::ops::Add<Value> for Value {
     type Output = Value;
 
     fn add(self, rhs: Value) -> Self::Output {
-        match_fuck!(self, v0, match_fuck!(rhs, v1, v0 + v1))
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0 + v1))
     }
 }
 impl std::ops::Sub<Value> for Value {
     type Output = Value;
 
     fn sub(self, rhs: Value) -> Self::Output {
-        match_fuck!(self, v0, match_fuck!(rhs, v1, v0 - v1))
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0 - v1))
     }
 }
 impl std::ops::Mul<Value> for Value {
     type Output = Value;
 
     fn mul(self, rhs: Value) -> Self::Output {
-        match_fuck!(self, v0, match_fuck!(rhs, v1, v0 * v1))
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0 * v1))
     }
 }
 impl std::ops::Div<Value> for Value {
     type Output = Value;
 
     fn div(self, rhs: Value) -> Self::Output {
-        match_fuck!(self, v0, match_fuck!(rhs, v1, v0 / v1))
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0 / v1))
+    }
+}
+impl Pow<Value> for Value {
+    type Output = Value;
+
+    fn pow(self, rhs: Value) -> Self::Output {
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.pow(v1)))
     }
 }

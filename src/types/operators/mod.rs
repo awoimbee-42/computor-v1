@@ -51,7 +51,11 @@ pub enum Associativity {
 
 fn tok2val(t: Token) -> Value {
     if let Token::Value(v) = t {
-        v
+        if let Value::Group(g) = v {
+            g.simplify()
+        } else {
+            v
+        }
     } else {
         unreachable!()
     }

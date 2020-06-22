@@ -18,6 +18,15 @@ impl Real {
         }
         .simplify()
     }
+    pub fn is_whole(&self) -> bool {
+        self.denum == 1
+    }
+    fn inv(self) -> Self {
+        Self {
+            num: self.denum,
+            denum: self.num,
+        }
+    }
     fn simplify(mut self) -> Self {
         let common_factor = gcd(self.num, self.denum);
         self.num /= common_factor;
@@ -139,8 +148,25 @@ impl ops::Div<Real> for Real {
     type Output = Real;
 
     fn div(self, rhs: Real) -> Self::Output {
-        let inv_rhs = Real::new(rhs.denum, rhs.num);
-        self * inv_rhs
+        self * rhs.inv()
+    }
+}
+
+impl super::Pow<Real> for Real {
+    type Output = Real;
+
+    fn pow(mut self, rhs: Real) -> Self::Output {
+        assert!(rhs.denum == 1); // TODO
+        self.num = self.num.pow(rhs.num as u32);
+        self.denum = self.denum.pow(rhs.num as u32);
+        self
+    }
+}
+impl super::Pow<Float> for Real {
+    type Output = Float;
+
+    fn pow(self, rhs: Float) -> Self::Output {
+        Float::from(self).pow(rhs)
     }
 }
 
