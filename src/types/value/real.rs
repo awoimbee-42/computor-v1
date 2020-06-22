@@ -3,6 +3,8 @@ use std::convert::TryFrom;
 use std::fmt;
 use std::ops;
 
+use super::Float;
+
 #[derive(Debug, Clone, Copy)]
 pub struct Real {
     num: i64,
@@ -77,14 +79,13 @@ impl TryFrom<Real> for i64 {
 }
 
 // Operators
-impl ops::Add<f64> for Real {
-    type Output = f64;
+impl ops::Add<Float> for Real {
+    type Output = Float;
 
-    fn add(self, rhs: f64) -> Self::Output {
-        f64::from(self) + rhs
+    fn add(self, rhs: Float) -> Self::Output {
+        Float::from(self) + rhs
     }
 }
-
 impl ops::Add<Real> for Real {
     type Output = Real;
 
@@ -92,6 +93,54 @@ impl ops::Add<Real> for Real {
         let new_den = (self.denum * rhs.denum) / gcd(self.denum, rhs.denum);
         let new_num = self.num * (new_den / self.denum) + rhs.num * (new_den / rhs.denum);
         Real::new(new_num, new_den).simplify()
+    }
+}
+
+impl ops::Sub<Real> for Real {
+    type Output = Real;
+
+    fn sub(self, rhs: Real) -> Self::Output {
+        let new_den = (self.denum * rhs.denum) / gcd(self.denum, rhs.denum);
+        let new_num = self.num * (new_den / self.denum) - rhs.num * (new_den / rhs.denum);
+        Real::new(new_num, new_den).simplify()
+    }
+}
+impl ops::Sub<Float> for Real {
+    type Output = Float;
+
+    fn sub(self, rhs: Float) -> Self::Output {
+        Float::from(self) - rhs
+    }
+}
+
+impl ops::Mul<Float> for Real {
+    type Output = Float;
+
+    fn mul(self, rhs: Float) -> Self::Output {
+        Float::from(self) * rhs
+    }
+}
+impl ops::Mul<Real> for Real {
+    type Output = Real;
+
+    fn mul(self, rhs: Real) -> Self::Output {
+        Real::new(self.num * rhs.num, self.denum * rhs.denum).simplify()
+    }
+}
+
+impl ops::Div<Float> for Real {
+    type Output = Float;
+
+    fn div(self, rhs: Float) -> Self::Output {
+        Float::from(self) / rhs
+    }
+}
+impl ops::Div<Real> for Real {
+    type Output = Real;
+
+    fn div(self, rhs: Real) -> Self::Output {
+        let inv_rhs = Real::new(rhs.denum, rhs.num);
+        self * inv_rhs
     }
 }
 

@@ -1,16 +1,15 @@
+// TEMPORARY
+#![allow(dead_code)]
+
 use clap::clap_app;
 use lazy_static::lazy_static;
 
 use log::debug;
-use std::error::Error;
 use std::io::prelude::*;
 use std::io::{self, BufReader};
 
-mod operators;
 mod parsing;
 mod types;
-
-use types::Group;
 
 #[derive(Debug, Default)]
 struct Config {
@@ -38,46 +37,46 @@ fn read_line(stdin: &mut dyn BufRead) -> Option<String> {
     stdin.lines().next().transpose().unwrap()
 }
 
-use types::Token;
-fn calculate_group(group: &mut Group) -> Result<(), Box<dyn Error>> {
-    debug!("Calculate group: {}", group);
+// fn calculate_group(group: &mut Group) -> Result<(), Box<dyn Error>> {
+//     debug!("Calculate group: {}", group);
 
-    let mut broke_out = true;
-    while broke_out {
-        broke_out = false;
-        for (id, token) in group.iter_mut().enumerate() {
-            if let Token::Operator(o) = token {
-                if o.operate(group, id).is_ok() {
-                    broke_out = true;
-                    break;
-                }
-                break;
-            }
-        }
-    }
-    Ok(())
+//     let mut broke_out = true;
+//     while broke_out {
+//         broke_out = false;
+//         for (id, token) in group.iter_mut().enumerate() {
+//             if let Token::Operator(o) = token {
+//                 if o.operate(group, id).is_ok() {
+//                     broke_out = true;
+//                     break;
+//                 }
+//                 break;
+//             }
+//         }
+//     }
+//     Ok(())
 
-    // // Calculate inner groups
-    // for token in group.inner_mut().iter_mut() {
-    //     match token.borrow_mut() {
-    //         Token::Value(v) => match v {
-    //             Value::Group(g) => {
-    //                 calculate_group(g);
-    //                 // calculate_group(group); // TO DO
-    //                 return;
-    //             }
-    //             _ => (),
-    //         },
-    //         _ => (),
-    //     }
-    // }
-}
+//     // // Calculate inner groups
+//     // for token in group.inner_mut().iter_mut() {
+//     //     match token.borrow_mut() {
+//     //         Token::Value(v) => match v {
+//     //             Value::Group(g) => {
+//     //                 calculate_group(g);
+//     //                 // calculate_group(group); // TO DO
+//     //                 return;
+//     //             }
+//     //             _ => (),
+//     //         },
+//     //         _ => (),
+//     //     }
+//     // }
+// }
 
 fn calculate_line(line: String) {
     let mut tokens = parsing::parse_group(&mut line.chars()).unwrap();
     debug!("tokens:\n{:?}", tokens);
     debug!("expr: {}", tokens);
-    tokens.simplify();
+    tokens.simplify_ref();
+    debug!("expr: {}", tokens);
     // calculate_group(&mut tokens).unwrap();
 }
 

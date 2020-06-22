@@ -15,6 +15,8 @@ use mul::Mul;
 use pow::Pow;
 use sub::Sub;
 
+use crate::types::{Token, Value};
+
 // I really need associated const impls to work, or const impl to get implemented :/
 pub trait Operator: Debug + Sync + Display {
     fn sign(&self) -> char;
@@ -45,4 +47,12 @@ pub enum Associativity {
     Left,
     Right,
     Any,
+}
+
+fn tok2val(t: Token) -> Value {
+    if let Token::Value(v) = t {
+        v
+    } else {
+        unreachable!()
+    }
 }

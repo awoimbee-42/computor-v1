@@ -1,9 +1,10 @@
-pub mod group;
-pub mod real;
-pub use group::Group;
-pub use real::Real;
+pub mod value;
+pub use value::*;
 
-use crate::operators::Operator;
+pub mod operators;
+pub use operators::*;
+
+use std::fmt;
 
 // TO DO //
 #[derive(Debug)]
@@ -47,26 +48,6 @@ impl fmt::Display for Token {
         match self {
             Token::Operator(o) => write!(f, "{}", o),
             Token::Value(v) => write!(f, "{}", v),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum Value {
-    Group(Group),
-    // Fun(Fun), -> functions are groups
-    Var(String),
-    Real(Real),
-    Float(f64),
-}
-use std::fmt;
-impl fmt::Display for Value {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Value::Group(g) => write!(f, "{}", g),
-            Value::Var(v) => write!(f, "{}", v),
-            Value::Real(r) => write!(f, "{}", r),
-            Value::Float(f_) => write!(f, "{}", f_),
         }
     }
 }

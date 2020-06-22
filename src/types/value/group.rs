@@ -1,5 +1,4 @@
-use super::Token;
-use crate::operators::Operator;
+use crate::types::Token;
 use log::debug;
 use std::fmt;
 
@@ -11,6 +10,7 @@ impl Group {
     }
     pub fn simplify_ref(&mut self) {
         debug!("simplify group: {}", &self);
+
         for precedence_lvl in (0..8).rev() {
             debug!("precedence {}", precedence_lvl);
             let mut has_mutated = true;
