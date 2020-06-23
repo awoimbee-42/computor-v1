@@ -1,6 +1,7 @@
 use super::Num;
 use std::fmt;
 use std::ops;
+use super::Value;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Var {
@@ -25,6 +26,15 @@ impl Var {
     }
     fn eq_pow(&self, other: &Self) -> bool {
         self.eq_name(other) && self.pow == other.pow
+    }
+    fn simplify(mut self) -> Value {
+        if self.coef == 0 {
+            Value::from(Num::from(0))
+        } else if self.pow == 0 {
+            Value::from(Num::from(1))
+        } else {
+            Value::from(self)
+        }
     }
 }
 
@@ -54,9 +64,14 @@ impl ops::Add<Var> for Num {
     }
 }
 impl ops::Add<Var> for Var {
-    type Output = Num;
-    fn add(self, rhs: Var) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
+    type Output = Var;
+    fn add(mut self, rhs: Var) -> Self::Output {
+        if self.eq_pow(&rhs) {
+            self.coef = self.coef + rhs.coef;
+        } else {
+            panic!("I have to work around this... :("); // TODO
+        }
+        self
     }
 }
 impl ops::Sub<Num> for Var {
