@@ -28,6 +28,13 @@ parse_expr -> Expr {
 ```
 
 ```Rust
+#[derive(Debug, Clone)]
+pub enum LexItem<'a> {
+    Paren(char),
+    Op(&'a str),
+    Num(&'a str),
+}
+
 enum Expr {
     Add((Expr, Term)),
     Sub((Expr, Term)),

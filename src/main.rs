@@ -1,6 +1,6 @@
 // TEMPORARY
 #![allow(dead_code)]
-
+#![feature(box_patterns)]
 use clap::clap_app;
 use lazy_static::lazy_static;
 
@@ -71,14 +71,14 @@ fn read_line(stdin: &mut dyn BufRead) -> Option<String> {
 //     // }
 // }
 
-fn calculate_line(line: String) {
-    let mut tokens = parsing::parse_group(&mut line.chars()).unwrap();
-    debug!("tokens:\n{:?}", tokens);
-    debug!("expr: {}", tokens);
-    tokens.simplify_ref();
-    debug!("expr: {}", tokens);
-    // calculate_group(&mut tokens).unwrap();
-}
+// fn calculate_line(line: String) {
+//     let mut tokens = parsing::parse_group(&mut line.chars()).unwrap();
+//     debug!("tokens:\n{:?}", tokens);
+//     debug!("expr: {}", tokens);
+//     tokens.simplify_ref();
+//     debug!("expr: {}", tokens);
+//     // calculate_group(&mut tokens).unwrap();
+// }
 
 fn main() {
     let _arg_matches = clap_app!(myapp =>
@@ -94,7 +94,9 @@ fn main() {
 
     while let Some(mut line) = read_line(&mut stdin) {
         line = line.replace(" ", "");
-        line = format!("({})", line);
-        calculate_line(line);
+        // line = format!("({})", line);
+        let tmp = parsing::parse(&line);
+        println!("{}", tmp);
+        // calculate_line(line);
     }
 }

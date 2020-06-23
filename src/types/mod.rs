@@ -13,37 +13,37 @@ pub struct Computor {
     funs: HashMap<String, Group>,
 }
 
-// TO DO //
-#[derive(Debug)]
-pub struct Expr {
-    formula: Vec<Token>,
-    equals: Option<Vec<Token>>, // todo: greater than, less than
-}
-impl Expr {
-    pub fn new() -> Self {
-        Self {
-            formula: Vec::new(),
-            equals: None,
-        }
-    }
-}
-impl fmt::Display for Expr {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "(")?;
-        for v in &self.formula {
-            write!(f, "{}", v)?;
-        }
-        write!(f, ")")?;
-        if let Some(equals) = &self.equals {
-            write!(f, " = ")?;
-            for v in equals {
-                write!(f, "{}", v)?;
-            }
-        }
-        Ok(())
-    }
-}
-// //
+// // TO DO //
+// #[derive(Debug)]
+// pub struct Expr {
+//     formula: Vec<Token>,
+//     equals: Option<Vec<Token>>, // todo: greater than, less than
+// }
+// impl Expr {
+//     pub fn new() -> Self {
+//         Self {
+//             formula: Vec::new(),
+//             equals: None,
+//         }
+//     }
+// }
+// impl fmt::Display for Expr {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(f, "(")?;
+//         for v in &self.formula {
+//             write!(f, "{}", v)?;
+//         }
+//         write!(f, ")")?;
+//         if let Some(equals) = &self.equals {
+//             write!(f, " = ")?;
+//             for v in equals {
+//                 write!(f, "{}", v)?;
+//             }
+//         }
+//         Ok(())
+//     }
+// }
+// // //
 
 #[derive(Debug, Clone)]
 pub enum Token {

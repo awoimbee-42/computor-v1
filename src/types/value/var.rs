@@ -1,7 +1,7 @@
 use super::Num;
+use super::Value;
 use std::fmt;
 use std::ops;
-use super::Value;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Var {
