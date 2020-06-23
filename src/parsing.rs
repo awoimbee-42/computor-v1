@@ -3,7 +3,7 @@ use std::error::Error;
 use std::str::Chars;
 
 use crate::types::operators::ALL_OPERATORS;
-use crate::types::{Float, Group, Real, Token, Value};
+use crate::types::{Group, Num, Token, Value, Var};
 
 #[derive(Debug, Clone)]
 struct SyntaxError {
@@ -46,10 +46,28 @@ fn parse_number(iter: &mut Chars) -> Option<Value> {
         iter.next().unwrap();
     }
     if num == (num as i64) as f64 {
-        Some(Value::Real(Real::from(num as i64)))
+        Some(Value::Num(Num::from(num as i64)))
     } else {
-        Some(Value::Float(Float::from(num)))
+        Some(Value::Num(Num::from(num)))
     }
+}
+
+fn parse_var(iter: &mut Chars) -> Option<Value> {
+    let slice = iter.as_str();
+    let mut len = 0;
+    for c in slice.as_bytes() {
+        if !matches!(c, b'A'..=b'Z' | b'a'..=b'z') {
+            break;
+        };
+        len += 1;
+    }
+    if len == 0 {
+        return None;
+    };
+    for _ in 1..len {
+        iter.next();
+    }
+    Some(Value::Var(Var::new(&slice[..len])))
 }
 
 pub fn parse_group(iter: &mut Chars) -> Result<Group, Box<dyn Error>> {
@@ -62,11 +80,14 @@ pub fn parse_group(iter: &mut Chars) -> Result<Group, Box<dyn Error>> {
     let mut will_be_value = true;
 
     while let Some(ch) = iter.as_str().chars().next() {
+        debug!("ch: {}", ch);
         let t = if will_be_value {
             will_be_value = false;
             Token::Value(if ch == '(' {
                 Value::Group(parse_group(iter)?)
             } else if let Some(v) = parse_number(iter) {
+                v
+            } else if let Some(v) = parse_var(iter) {
                 v
             } else {
                 // TODO: var, function
@@ -81,7 +102,7 @@ pub fn parse_group(iter: &mut Chars) -> Result<Group, Box<dyn Error>> {
         debug!("char: {}, token: {1:?} ({1:})", ch, &t);
         tokens.push(t);
         iter.next();
-        if std::ptr::eq(&iter.as_str().as_bytes()[0], end) {
+        if std::ptr::eq(iter.as_str().as_ptr(), end) {
             break;
         }
     }

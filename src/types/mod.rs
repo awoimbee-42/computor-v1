@@ -6,6 +6,13 @@ pub use operators::*;
 
 use std::fmt;
 
+use std::collections::HashMap;
+
+pub struct Computor {
+    vars: HashMap<String, Value>,
+    funs: HashMap<String, Group>,
+}
+
 // TO DO //
 #[derive(Debug)]
 pub struct Expr {

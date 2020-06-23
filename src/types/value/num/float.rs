@@ -28,10 +28,20 @@ impl fmt::Display for Float {
 
 // Eq
 impl Eq for Float {}
-
 impl PartialEq for Float {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
+    }
+}
+impl PartialEq<Real> for Float {
+    fn eq(&self, other: &Real) -> bool {
+        let other = Float::from(*other);
+        self.0 == other.0
+    }
+}
+impl PartialEq<i64> for Float {
+    fn eq(&self, other: &i64) -> bool {
+        self.0 == *other as f64
     }
 }
 
@@ -113,7 +123,7 @@ impl ops::Div<Real> for Float {
     }
 }
 use std::convert::TryFrom;
-impl super::Pow<Real> for Float {
+impl super::super::Pow<Real> for Float {
     type Output = Float;
 
     fn pow(mut self, rhs: Real) -> Self::Output {
@@ -121,7 +131,7 @@ impl super::Pow<Real> for Float {
         self
     }
 }
-impl super::Pow<Float> for Float {
+impl super::super::Pow<Float> for Float {
     type Output = Float;
 
     fn pow(self, rhs: Float) -> Self::Output {

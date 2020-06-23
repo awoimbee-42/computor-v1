@@ -46,10 +46,16 @@ impl fmt::Display for Real {
 
 // Eq
 impl Eq for Real {}
-
 impl PartialEq for Real {
     fn eq(&self, other: &Self) -> bool {
         self.num == other.num && self.denum == other.denum
+    }
+}
+
+impl PartialEq<Float> for Real {
+    fn eq(&self, other: &Float) -> bool {
+        let flt_self = Float::from(*self);
+        self == other
     }
 }
 
@@ -152,7 +158,7 @@ impl ops::Div<Real> for Real {
     }
 }
 
-impl super::Pow<Real> for Real {
+impl super::super::Pow<Real> for Real {
     type Output = Real;
 
     fn pow(mut self, rhs: Real) -> Self::Output {
@@ -162,7 +168,7 @@ impl super::Pow<Real> for Real {
         self
     }
 }
-impl super::Pow<Float> for Real {
+impl super::super::Pow<Float> for Real {
     type Output = Float;
 
     fn pow(self, rhs: Float) -> Self::Output {
