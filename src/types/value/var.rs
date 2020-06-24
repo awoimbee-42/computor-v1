@@ -27,7 +27,7 @@ impl Var {
     fn eq_pow(&self, other: &Self) -> bool {
         self.eq_name(other) && self.pow == other.pow
     }
-    fn simplify(mut self) -> Value {
+    fn simplify(self) -> Value {
         if self.coef == 0 {
             Value::from(Num::from(0))
         } else if self.pow == 0 {
@@ -53,13 +53,13 @@ impl fmt::Display for Var {
 
 impl ops::Add<Num> for Var {
     type Output = Num;
-    fn add(self, rhs: Num) -> Self::Output {
+    fn add(self, _rhs: Num) -> Self::Output {
         panic!("I have to work around this... :("); // TODO
     }
 }
 impl ops::Add<Var> for Num {
     type Output = Num;
-    fn add(self, rhs: Var) -> Self::Output {
+    fn add(self, _rhs: Var) -> Self::Output {
         panic!("I have to work around this... :("); // TODO
     }
 }
@@ -76,37 +76,37 @@ impl ops::Add<Var> for Var {
 }
 impl ops::Sub<Num> for Var {
     type Output = Num;
-    fn sub(self, rhs: Num) -> Self::Output {
+    fn sub(self, _rhs: Num) -> Self::Output {
         panic!("I have to work around this... :("); // TODO
     }
 }
 impl ops::Sub<Var> for Num {
     type Output = Num;
-    fn sub(self, rhs: Var) -> Self::Output {
+    fn sub(self, _rhs: Var) -> Self::Output {
         panic!("I have to work around this... :("); // TODO
     }
 }
 impl ops::Sub<Var> for Var {
     type Output = Num;
-    fn sub(self, rhs: Var) -> Self::Output {
+    fn sub(self, _rhs: Var) -> Self::Output {
         panic!("I have to work around this... :("); // TODO
     }
 }
 impl super::Pow<Var> for Num {
     type Output = Self;
-    fn pow(self, rhs: Var) -> Self::Output {
+    fn pow(self, _rhs: Var) -> Self::Output {
         panic!("I have to work around this... :("); // TODO
     }
 }
 impl super::Pow<Var> for Var {
     type Output = Self;
-    fn pow(self, rhs: Var) -> Self::Output {
+    fn pow(self, _rhs: Var) -> Self::Output {
         panic!("I have to work around this... :("); // TODO
     }
 }
 impl ops::Div<Var> for Num {
     type Output = Var;
-    fn div(self, rhs: Var) -> Self::Output {
+    fn div(self, _rhs: Var) -> Self::Output {
         panic!("I have to work around this... :("); // TODO
     }
 }

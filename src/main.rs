@@ -92,11 +92,8 @@ fn main() {
     env_logger::init();
     let mut stdin = BufReader::new(io::stdin());
 
-    while let Some(mut line) = read_line(&mut stdin) {
-        line = line.replace(" ", "");
-        // line = format!("({})", line);
-        let tmp = parsing::parse(&line);
-        println!("{}", tmp);
-        // calculate_line(line);
+    while let Some(line) = read_line(&mut stdin) {
+        let expr = parsing::parse(&line);
+        println!("{}", expr);
     }
 }

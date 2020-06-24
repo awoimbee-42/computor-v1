@@ -55,7 +55,7 @@ impl PartialEq for Real {
 impl PartialEq<Float> for Real {
     fn eq(&self, other: &Float) -> bool {
         let flt_self = Float::from(*self);
-        self == other
+        flt_self == *other
     }
 }
 

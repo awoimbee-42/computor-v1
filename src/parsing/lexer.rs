@@ -1,6 +1,4 @@
-use log::debug;
 use std::error::Error;
-use std::str::Chars;
 
 #[derive(Debug, Clone)]
 pub enum LexItem<'a> {
@@ -26,7 +24,7 @@ fn find_matching_prenthese(slice: &str) -> Result<usize, Box<dyn Error>> {
 }
 
 fn eat_whitespace(index: &mut usize, bytes: &[u8]) {
-    while *index < bytes.len() && bytes[*index] < b' ' {
+    while *index < bytes.len() && bytes[*index] <= b' ' {
         *index += 1
     }
 }
@@ -46,7 +44,7 @@ pub fn lex<'a>(input: &'a str) -> Vec<LexItem<'a>> {
             let start = index;
             index += 1;
             while index < bytes.len()
-                && !matches!(bytes[index], b'+' | b'-' | b'*' | b'/' | b'^' | b')')
+                && matches!(bytes[index], b'0'..=b'9' | b'e' | b'E' | b'.')
             {
                 index += 1
             }
