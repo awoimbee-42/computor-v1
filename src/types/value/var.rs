@@ -1,10 +1,9 @@
 use super::Num;
 use super::Value;
+use super::*;
+use std::cmp;
 use std::fmt;
 use std::ops;
-use std::cmp;
-use super::*;
-
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Var {

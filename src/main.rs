@@ -7,17 +7,18 @@ use lcomputor::Computor;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
 
-
 fn main() {
     let arg_matches = App::new("computor-v1")
         .version("0.0.1")
         .author("Arthur W. <arthur.woimbee@gmail.com>")
         .about("Calculates stuff")
-        .arg(Arg::with_name("debug")
-            .short("H")
-            .long("history")
-            .takes_value(true)
-            .help("load command history from file"))
+        .arg(
+            Arg::with_name("debug")
+                .short("H")
+                .long("history")
+                .takes_value(true)
+                .help("load command history from file"),
+        )
         .get_matches();
 
     env_logger::init();
@@ -36,13 +37,11 @@ fn main() {
                 rl.add_history_entry(line.as_str());
                 let expr = c.compute_line(&line);
                 println!("{}", expr);
-            },
-            Err(ReadlineError::Interrupted) | Err(ReadlineError::Eof) => {
-                break
-            },
+            }
+            Err(ReadlineError::Interrupted) | Err(ReadlineError::Eof) => break,
             Err(err) => {
                 println!("Error: {:?}", err);
-                break
+                break;
             }
         }
     }

@@ -4,9 +4,9 @@ mod real;
 use float::Float;
 use real::Real;
 
+use super::*;
 use std::fmt;
 use std::ops;
-use super::*;
 
 #[derive(Debug, Clone)]
 pub enum Num {
@@ -104,7 +104,6 @@ impl super::Pow<Num> for Num {
         for_any_num!(self, v0, for_any_num!(rhs, v1, Num::from(v0.pow(v1))))
     }
 }
-
 
 /*################################## TRY OP ##################################*/
 impl TryAdd<Num> for Num {

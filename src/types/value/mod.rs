@@ -1,13 +1,13 @@
-mod var;
 mod num;
+mod var;
 
-pub use var::Var;
 pub use num::Num;
+pub use var::Var;
 
-use std::fmt;
-use std::cmp;
-use log::debug;
 use super::*;
+use log::debug;
+use std::cmp;
+use std::fmt;
 
 #[derive(Debug, Clone)]
 pub enum Value {
@@ -28,15 +28,17 @@ impl fmt::Display for Value {
 }
 
 impl super::Resolve for Value {
-	fn resolve(&mut self) -> Option<Value> {
+    fn resolve(&mut self) -> Option<Value> {
         debug!("resolve: {}", self);
-		match self {
+        match self {
             Self::Num(v) => (),
-            Self::Expr(e) => {e.resolve();},
+            Self::Expr(e) => {
+                e.resolve();
+            }
             _ => (), // TODO
         };
         Some(self.clone())
-	}
+    }
 }
 
 pub trait Pow<T> {
@@ -66,7 +68,6 @@ impl From<Var> for Value {
 //     }
 // }
 
-
 macro_rules! for_any_value {
     ($matched:ident, $name:ident, $what:expr) => {
         match $matched {
@@ -79,7 +80,10 @@ macro_rules! for_any_value {
 }
 
 impl<T: Into<Value> + Clone> cmp::PartialEq<T> for Value {
-    fn eq(&self, rhs: &T) -> bool where T: Into<Value> {
+    fn eq(&self, rhs: &T) -> bool
+    where
+        T: Into<Value>,
+    {
         let rhs_val: Value = rhs.clone().into();
         for_any_value!(self, v0, for_any_value!(rhs_val, v1, *v0 == v1))
     }
@@ -88,30 +92,50 @@ impl<T: Into<Value> + Clone> cmp::PartialEq<T> for Value {
 impl TryAdd<Value> for Value {
     type Output = Value;
     fn try_add(self, rhs: Value) -> Option<Self::Output> {
-        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_add(v1).map(|v| Value::from(v))))
+        for_any_value!(
+            self,
+            v0,
+            for_any_value!(rhs, v1, v0.try_add(v1).map(|v| Value::from(v)))
+        )
     }
 }
 impl TrySub<Value> for Value {
     type Output = Value;
     fn try_sub(self, rhs: Value) -> Option<Self::Output> {
-        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_sub(v1).map(|v| Value::from(v))))
+        for_any_value!(
+            self,
+            v0,
+            for_any_value!(rhs, v1, v0.try_sub(v1).map(|v| Value::from(v)))
+        )
     }
 }
 impl TryMul<Value> for Value {
     type Output = Value;
     fn try_mul(self, rhs: Value) -> Option<Self::Output> {
-        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_mul(v1).map(|v| Value::from(v))))
+        for_any_value!(
+            self,
+            v0,
+            for_any_value!(rhs, v1, v0.try_mul(v1).map(|v| Value::from(v)))
+        )
     }
 }
 impl TryDiv<Value> for Value {
     type Output = Value;
     fn try_div(self, rhs: Value) -> Option<Self::Output> {
-        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_div(v1).map(|v| Value::from(v))))
+        for_any_value!(
+            self,
+            v0,
+            for_any_value!(rhs, v1, v0.try_div(v1).map(|v| Value::from(v)))
+        )
     }
 }
 impl TryPow<Value> for Value {
     type Output = Value;
     fn try_pow(self, rhs: Value) -> Option<Self::Output> {
-        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_pow(v1).map(|v| Value::from(v))))
+        for_any_value!(
+            self,
+            v0,
+            for_any_value!(rhs, v1, v0.try_pow(v1).map(|v| Value::from(v)))
+        )
     }
 }

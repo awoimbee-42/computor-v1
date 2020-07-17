@@ -6,8 +6,8 @@ pub mod value;
 pub use expr::Expr;
 pub use factor::Factor;
 pub use term::Term;
-pub use value::Value;
 pub use value::Num;
+pub use value::Value;
 pub use value::Var;
 
 pub trait Resolve {
@@ -39,7 +39,6 @@ pub trait TryPow<T> {
 
     fn try_pow(self, rhs: T) -> Option<Self::Output>;
 }
-
 
 // #[derive(Debug, Clone)]
 // pub struct Fun {
