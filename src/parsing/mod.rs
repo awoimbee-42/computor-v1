@@ -12,25 +12,23 @@ use super::types::*;
 
 #[derive(Debug, Clone)]
 struct ParseError<'a> {
-    lexed: &'a [LexItem<'a>],
-    idx: usize,
+    lexed: &'a LexItem<'a>,
     msg: String,
 }
-// impl<'a> ParseError<'a> {
-//     pub fn new<S>(lexed: &'a [LexItem<'a>], idx: usize, msg: S) -> Self
-//     where
-//         S: Into<String>,
-//     {
-//         Self {
-//             lexed,
-//             idx,
-//             msg: msg.into(),
-//         }
-//     }
-// }
+impl<'a> ParseError<'a> {
+    pub fn new<S>(lexed: &'a LexItem<'a>, msg: S) -> Self
+    where
+        S: Into<String>,
+    {
+        Self {
+            lexed,
+            msg: msg.into(),
+        }
+    }
+}
 impl<'a> fmt::Display for ParseError<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Error {} in {:?}", self.msg, self.lexed[self.idx])
+        write!(f, "Error {} in {:?}", self.msg, self.lexed)
     }
 }
 
@@ -113,13 +111,17 @@ where
             _ => unreachable!(),
         };
         if !matches!(last_op, &"+" | &"-") {
-            break;
+            return Err(ParseError::new(lexed, "invalid symbol"));
         };
         expr = match last_op {
             &"+" => Expr::new_add(expr, parse_term(item)?),
             &"-" => Expr::new_sub(expr, parse_term(item)?),
             _ => unreachable!(),
         };
+    }
+    if item.next().is_some() {
+        println!("AAAAAAAAAAAAAAAA");
+        panic!();
     }
     Ok(expr)
 }

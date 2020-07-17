@@ -88,6 +88,11 @@ impl super::Resolve for ExprInner {
 			Self::Add((a, b)) | Self::Sub((a, b)) => {
 				let a = a.resolve();
 				let b = b.resolve();
+				debug!(
+					"ADD OR SUB: a: {} b: {}",
+					a.clone().map_or("None".to_owned(), |v| format!("{}", v)),
+					b.clone().map_or("None".to_owned(), |v| format!("{}", v)),
+				);
 				if let Some(a) = a {
 					if let Some(b) = b {
 						let val = match self {
@@ -98,6 +103,7 @@ impl super::Resolve for ExprInner {
 						*self = Self::from(val.clone());
 						return Some(val);
 					}
+
 				}
 				return None;
 			},
