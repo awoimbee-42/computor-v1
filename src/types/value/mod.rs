@@ -5,8 +5,9 @@ pub use var::Var;
 pub use num::Num;
 
 use std::fmt;
+use std::cmp;
 use log::debug;
-use super::expr::Expr;
+use super::*;
 
 #[derive(Debug, Clone)]
 pub enum Value {
@@ -27,15 +28,14 @@ impl fmt::Display for Value {
 }
 
 impl super::Resolve for Value {
-	type Output = Num;
-
-	fn resolve(&mut self) -> Option<Self::Output> {
+	fn resolve(&mut self) -> Option<Value> {
         debug!("resolve: {}", self);
 		match self {
-            Self::Num(v) => Some(v.clone()),
-            Self::Expr(e) => e.resolve(),
-            _ => None, // TODO
-		}
+            Self::Num(v) => (),
+            Self::Expr(e) => {e.resolve();},
+            _ => (), // TODO
+        };
+        Some(self.clone())
 	}
 }
 
@@ -67,49 +67,51 @@ impl From<Var> for Value {
 // }
 
 
-// macro_rules! for_any_value {
-//     ($matched:ident, $name:ident, $what:expr) => {
-//         match $matched {
-//             // Value::Group($name) => $what,
-//             Value::Var($name) => $what,
-//             Value::Num($name) => $what,
-//             _ => panic!("Operations aren't implemented for this type ({})", $matched),
-//         }
-//     };
-// }
+macro_rules! for_any_value {
+    ($matched:ident, $name:ident, $what:expr) => {
+        match $matched {
+            // Value::Group($name) => $what,
+            Value::Var($name) => $what,
+            Value::Num($name) => $what,
+            _ => panic!("Operations aren't implemented for this type ({})", $matched), // TODO !!
+        }
+    };
+}
 
-// impl std::ops::Add<Value> for Value {
-//     type Output = Value;
+impl<T: Into<Value> + Clone> cmp::PartialEq<T> for Value {
+    fn eq(&self, rhs: &T) -> bool where T: Into<Value> {
+        let rhs_val: Value = rhs.clone().into();
+        for_any_value!(self, v0, for_any_value!(rhs_val, v1, *v0 == v1))
+    }
+}
 
-//     fn add(self, rhs: Value) -> Self::Output {
-//         for_any_value!(self, v0, for_any_value!(rhs, v1, Value::from(v0 + v1)))
-//     }
-// }
-// impl std::ops::Sub<Value> for Value {
-//     type Output = Value;
-
-//     fn sub(self, rhs: Value) -> Self::Output {
-//         for_any_value!(self, v0, for_any_value!(rhs, v1, Value::from(v0 - v1)))
-//     }
-// }
-// impl std::ops::Mul<Value> for Value {
-//     type Output = Value;
-
-//     fn mul(self, rhs: Value) -> Self::Output {
-//         for_any_value!(self, v0, for_any_value!(rhs, v1, Value::from(v0 * v1)))
-//     }
-// }
-// impl std::ops::Div<Value> for Value {
-//     type Output = Value;
-
-//     fn div(self, rhs: Value) -> Self::Output {
-//         for_any_value!(self, v0, for_any_value!(rhs, v1, Value::from(v0 / v1)))
-//     }
-// }
-// impl Pow<Value> for Value {
-//     type Output = Value;
-
-//     fn pow(self, rhs: Value) -> Self::Output {
-//         for_any_value!(self, v0, for_any_value!(rhs, v1, Value::from(v0.pow(v1))))
-//     }
-// }
+impl TryAdd<Value> for Value {
+    type Output = Value;
+    fn try_add(self, rhs: Value) -> Option<Self::Output> {
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_add(v1).map(|v| Value::from(v))))
+    }
+}
+impl TrySub<Value> for Value {
+    type Output = Value;
+    fn try_sub(self, rhs: Value) -> Option<Self::Output> {
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_sub(v1).map(|v| Value::from(v))))
+    }
+}
+impl TryMul<Value> for Value {
+    type Output = Value;
+    fn try_mul(self, rhs: Value) -> Option<Self::Output> {
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_mul(v1).map(|v| Value::from(v))))
+    }
+}
+impl TryDiv<Value> for Value {
+    type Output = Value;
+    fn try_div(self, rhs: Value) -> Option<Self::Output> {
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_div(v1).map(|v| Value::from(v))))
+    }
+}
+impl TryPow<Value> for Value {
+    type Output = Value;
+    fn try_pow(self, rhs: Value) -> Option<Self::Output> {
+        for_any_value!(self, v0, for_any_value!(rhs, v1, v0.try_pow(v1).map(|v| Value::from(v))))
+    }
+}

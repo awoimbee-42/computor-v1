@@ -1,5 +1,7 @@
 use super::Term;
 use super::Num;
+use super::Value;
+use super::*;
 
 use std::fmt;
 use std::collections::HashMap;
@@ -71,17 +73,13 @@ impl Expr {
 }
 
 impl super::Resolve for Expr {
-	type Output = Num;
-
-	fn resolve(&mut self) -> Option<Self::Output> {
+	fn resolve(&mut self) -> Option<Value> {
 		self.expr.resolve()
 	}
 }
 
 impl super::Resolve for ExprInner {
-	type Output = Num;
-
-	fn resolve(&mut self) -> Option<Self::Output> {
+	fn resolve(&mut self) -> Option<Value> {
 		debug!("resolve: {}", self);
 		match self {
 			Self::Term(t) => t.resolve(),
@@ -96,12 +94,14 @@ impl super::Resolve for ExprInner {
 				if let Some(a) = a {
 					if let Some(b) = b {
 						let val = match self {
-							Self::Add(_) => a + b,
-							Self::Sub(_) => a - b,
+							Self::Add(_) => a.try_add(b),
+							Self::Sub(_) => a.try_sub(b),
 							_ => unreachable!(),
 						};
-						*self = Self::from(val.clone());
-						return Some(val);
+						if let Some(v) = &val {
+							*self = Self::from(v.clone());
+						}
+						return val;
 					}
 
 				}

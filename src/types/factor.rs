@@ -2,6 +2,7 @@ use std::fmt;
 use super::value::Value;
 use super::value::Pow;
 use super::value::Num;
+use super::*;
 
 use log::debug;
 
@@ -27,9 +28,7 @@ impl<T: Into<Value>> From<T> for Factor {
 }
 
 impl super::Resolve for Factor {
-	type Output = Num;
-
-	fn resolve(&mut self) -> Option<Self::Output> {
+	fn resolve(&mut self) -> Option<Value> {
 		debug!("resolve: {}", self);
 		match self {
 			Self::Value(v) => return v.resolve(),
@@ -39,7 +38,7 @@ impl super::Resolve for Factor {
 
 				if let Some(num_b) = &opt_b {
 					if *num_b == 0 {
-						let res = Num::from(1);
+						let res = Value::from(1);
 						*self = Self::from(res.clone());
 						return Some(res);
 					}
@@ -50,21 +49,23 @@ impl super::Resolve for Factor {
 				}
 				if let Some(num_a) = &opt_a {
 					if *num_a == 0 {
-						let res = Num::from(0);
+						let res = Value::from(0);
 						*self =  Self::from(res.clone());
 						return Some(res);
 					}
 					if *num_a == 1 {
-						let res = Num::from(1);
+						let res = Value::from(1);
 						*self =  Self::from(res.clone());
 						return Some(res);
 					}
 				}
 				if let Some(num_b) = opt_b {
 					if let Some(num_a) = opt_a {
-						let res = num_a.clone().pow(num_b);
-						*self =  Self::from(res.clone());
-						return Some(res);
+						let res = num_a.clone().try_pow(num_b);
+						if let Some(v) = &res {
+							*self = Self::from(v.clone());
+						}
+						return res;
 					}
 				}
 			}

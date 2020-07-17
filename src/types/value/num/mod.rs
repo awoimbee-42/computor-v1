@@ -6,6 +6,7 @@ use real::Real;
 
 use std::fmt;
 use std::ops;
+use super::*;
 
 #[derive(Debug, Clone)]
 pub enum Num {
@@ -13,6 +14,25 @@ pub enum Num {
     Real(Real),
 }
 
+impl fmt::Display for Num {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Num::Real(v) => write!(f, "{}", v),
+            Num::Float(v) => write!(f, "{}", v),
+        }
+    }
+}
+
+macro_rules! for_any_num {
+    ($matched:ident, $name:ident, $what:expr) => {
+        match $matched {
+            Num::Float($name) => $what,
+            Num::Real($name) => $what,
+        }
+    };
+}
+
+/*################################### FROM ####################################*/
 impl From<Real> for Num {
     fn from(val: Real) -> Self {
         Num::Real(val)
@@ -34,25 +54,7 @@ impl From<f64> for Num {
     }
 }
 
-impl fmt::Display for Num {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Num::Real(v) => write!(f, "{}", v),
-            Num::Float(v) => write!(f, "{}", v),
-        }
-    }
-}
-
-// Operators
-macro_rules! for_any_num {
-    ($matched:ident, $name:ident, $what:expr) => {
-        match $matched {
-            Num::Float($name) => $what,
-            Num::Real($name) => $what,
-        }
-    };
-}
-
+/*#################################### EQ ####################################*/
 impl Eq for Num {}
 
 impl PartialEq for Num {
@@ -66,6 +68,7 @@ impl PartialEq<i64> for Num {
     }
 }
 
+/*#################################### OP ####################################*/
 impl ops::Add<Num> for Num {
     type Output = Num;
 
@@ -73,7 +76,6 @@ impl ops::Add<Num> for Num {
         for_any_num!(self, v0, for_any_num!(rhs, v1, Num::from(v0 + v1)))
     }
 }
-
 impl ops::Sub<Num> for Num {
     type Output = Num;
 
@@ -81,7 +83,6 @@ impl ops::Sub<Num> for Num {
         for_any_num!(self, v0, for_any_num!(rhs, v1, Num::from(v0 - v1)))
     }
 }
-
 impl ops::Mul<Num> for Num {
     type Output = Num;
 
@@ -89,7 +90,6 @@ impl ops::Mul<Num> for Num {
         for_any_num!(self, v0, for_any_num!(rhs, v1, Num::from(v0 * v1)))
     }
 }
-
 impl ops::Div<Num> for Num {
     type Output = Num;
 
@@ -97,11 +97,43 @@ impl ops::Div<Num> for Num {
         for_any_num!(self, v0, for_any_num!(rhs, v1, Num::from(v0 / v1)))
     }
 }
-
 impl super::Pow<Num> for Num {
     type Output = Num;
 
     fn pow(self, rhs: Num) -> Self::Output {
         for_any_num!(self, v0, for_any_num!(rhs, v1, Num::from(v0.pow(v1))))
+    }
+}
+
+
+/*################################## TRY OP ##################################*/
+impl TryAdd<Num> for Num {
+    type Output = Num;
+    fn try_add(self, rhs: Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0 + v1))))
+    }
+}
+impl TrySub<Num> for Num {
+    type Output = Num;
+    fn try_sub(self, rhs: Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0 - v1))))
+    }
+}
+impl TryMul<Num> for Num {
+    type Output = Num;
+    fn try_mul(self, rhs: Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0 * v1))))
+    }
+}
+impl TryDiv<Num> for Num {
+    type Output = Num;
+    fn try_div(self, rhs: Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0 / v1))))
+    }
+}
+impl TryPow<Num> for Num {
+    type Output = Num;
+    fn try_pow(self, rhs: Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0.pow(v1)))))
     }
 }

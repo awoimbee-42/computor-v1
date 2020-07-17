@@ -1,6 +1,8 @@
 use std::fmt;
 use super::factor::Factor;
-use super::value::Num;
+use super::Num;
+use super::Value;
+use super::*;
 use log::debug;
 
 #[derive(Debug, Clone)]
@@ -26,9 +28,7 @@ impl<T: Into<Factor>> From<T> for Term {
 }
 
 impl super::Resolve for Term {
-	type Output = Num;
-
-	fn resolve(&mut self) -> Option<Self::Output> {
+	fn resolve(&mut self) -> Option<Value> {
 		debug!("resolve: {}", self);
 		match self {
 			Self::Factor(v) => v.resolve(),
@@ -46,12 +46,14 @@ impl super::Resolve for Term {
 					None => return None,
 				};
 				let res = match self {
-					Self::Div(_) => v0 / v1,
-					Self::Mul(_) => v0 * v1,
+					Self::Div(_) => v0.try_div(v1),
+					Self::Mul(_) => v0.try_mul(v1),
 					_ => unreachable!(),
 				};
-				*self = Self::from(res.clone());
-				return Some(res);
+				if let Some(v) = &res {
+					*self = Self::from(v.clone());
+				}
+				return res;
 			}
 		}
 	}

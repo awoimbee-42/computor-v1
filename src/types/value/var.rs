@@ -2,6 +2,9 @@ use super::Num;
 use super::Value;
 use std::fmt;
 use std::ops;
+use std::cmp;
+use super::*;
+
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Var {
@@ -51,113 +54,132 @@ impl fmt::Display for Var {
     }
 }
 
-impl ops::Add<Num> for Var {
-    type Output = Num;
-    fn add(self, _rhs: Num) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
+impl cmp::PartialEq<Num> for Var {
+    fn eq(&self, _rhs: &Num) -> bool {
+        false
     }
 }
-impl ops::Add<Var> for Num {
-    type Output = Num;
-    fn add(self, _rhs: Var) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
+impl cmp::PartialEq<Var> for Num {
+    fn eq(&self, _rhs: &Var) -> bool {
+        false
     }
 }
-impl ops::Add<Var> for Var {
+
+impl TryAdd<Var> for Num {
+    type Output = Value;
+    fn try_add(self, _rhs: Var) -> Option<Self::Output> {
+        None
+    }
+}
+impl TrySub<Var> for Num {
+    type Output = Value;
+    fn try_sub(self, _rhs: Var) -> Option<Self::Output> {
+        None
+    }
+}
+
+impl TryAdd<Num> for Var {
+    type Output = Value;
+
+    fn try_add(self, _rhs: Num) -> Option<Self::Output> {
+        None
+    }
+}
+impl TrySub<Num> for Var {
+    type Output = Value;
+
+    fn try_sub(self, _rhs: Num) -> Option<Self::Output> {
+        None
+    }
+}
+impl TryAdd<Self> for Var {
     type Output = Var;
-    fn add(mut self, rhs: Var) -> Self::Output {
+    fn try_add(mut self, rhs: Self) -> Option<Self::Output> {
         if self.eq_pow(&rhs) {
             self.coef = self.coef + rhs.coef;
+            Some(self)
         } else {
-            panic!("I have to work around this... :("); // TODO
+            None
         }
-        self
     }
 }
-impl ops::Sub<Num> for Var {
-    type Output = Num;
-    fn sub(self, _rhs: Num) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
-    }
-}
-impl ops::Sub<Var> for Num {
-    type Output = Num;
-    fn sub(self, _rhs: Var) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
-    }
-}
-impl ops::Sub<Var> for Var {
-    type Output = Num;
-    fn sub(self, _rhs: Var) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
-    }
-}
-impl super::Pow<Var> for Num {
-    type Output = Self;
-    fn pow(self, _rhs: Var) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
-    }
-}
-impl super::Pow<Var> for Var {
-    type Output = Self;
-    fn pow(self, _rhs: Var) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
-    }
-}
-impl ops::Div<Var> for Num {
+impl TrySub<Self> for Var {
     type Output = Var;
-    fn div(self, _rhs: Var) -> Self::Output {
-        panic!("I have to work around this... :("); // TODO
+    fn try_sub(mut self, rhs: Self) -> Option<Self::Output> {
+        if self.eq_pow(&rhs) {
+            self.coef = self.coef - rhs.coef;
+            Some(self)
+        } else {
+            None
+        }
     }
 }
-
-impl ops::Mul<Num> for Var {
+impl super::TryPow<Var> for Num {
     type Output = Self;
-
-    fn mul(mut self, rhs: Num) -> Self::Output {
+    fn try_pow(self, _rhs: Var) -> Option<Self::Output> {
+        None
+    }
+}
+impl super::TryPow<Self> for Var {
+    type Output = Self;
+    fn try_pow(self, _rhs: Var) -> Option<Self::Output> {
+        None
+    }
+}
+impl TryDiv<Var> for Num {
+    type Output = Self;
+    fn try_div(self, _rhs: Var) -> Option<Self::Output> {
+        None
+    }
+}
+impl TryMul<Num> for Var {
+    type Output = Self;
+    fn try_mul(mut self, rhs: Num) -> Option<Self::Output> {
         self.coef = self.coef * rhs;
-        self
+        Some(self)
     }
 }
-impl ops::Mul<Var> for Num {
+impl TryMul<Var> for Num {
     type Output = Var;
-    fn mul(self, rhs: Var) -> Self::Output {
-        rhs * self
+    fn try_mul(self, rhs: Var) -> Option<Self::Output> {
+        rhs.try_mul(self)
     }
 }
-impl ops::Mul<Var> for Var {
+impl TryMul<Var> for Var {
     type Output = Self;
-    fn mul(mut self, rhs: Var) -> Self::Output {
+    fn try_mul(mut self, rhs: Self) -> Option<Self::Output> {
         if !self.eq_name(&rhs) {
-            panic!("TODO");
+            None
+        } else {
+            self.pow = self.pow * rhs.pow;
+            self.coef = self.coef + rhs.coef;
+            Some(self)
         }
-        self.pow = self.pow * rhs.pow;
-        self.coef = self.coef + rhs.coef;
-        self
     }
 }
-impl ops::Div<Num> for Var {
+impl TryDiv<Num> for Var {
     type Output = Self;
-    fn div(mut self, rhs: Num) -> Self::Output {
+    fn try_div(mut self, rhs: Num) -> Option<Self::Output> {
         self.coef = self.coef / rhs;
-        self
+        Some(self)
     }
 }
-impl ops::Div<Var> for Var {
+impl TryDiv<Var> for Var {
     type Output = Self;
-    fn div(mut self, rhs: Var) -> Self::Output {
+    fn try_div(mut self, rhs: Self) -> Option<Self::Output> {
         if !self.eq_name(&rhs) {
-            panic!("TODO");
+            None
+        } else {
+            self.pow = self.pow - rhs.pow;
+            self.coef = self.coef / rhs.coef;
+            Some(self)
         }
-        self.pow = self.pow - rhs.pow;
-        self.coef = self.coef / rhs.coef;
-        self
     }
 }
-impl super::Pow<Num> for Var {
+impl TryPow<Num> for Var {
     type Output = Self;
-    fn pow(mut self, rhs: Num) -> Self::Output {
+    fn try_pow(mut self, rhs: Num) -> Option<Self::Output> {
         self.pow = self.pow * rhs;
-        self
+        Some(self)
     }
 }
