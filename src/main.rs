@@ -2,35 +2,15 @@
 #![allow(dead_code)]
 #![feature(box_patterns)]
 use clap::clap_app;
-use lazy_static::lazy_static;
 
 use log::debug;
 use std::io::prelude::*;
 use std::io::{self, BufReader};
 
-mod parsing;
-mod types;
+use lcomputor::Computor;
 
-#[derive(Debug, Default)]
-struct Config {
-    is_tty: bool,
-    // float2real: bool, // TODO
-    // print_float: bool, // TODO
-}
-
-impl Config {
-    pub fn new() -> Self {
-        let is_tty = unsafe { libc::isatty(libc::STDIN_FILENO) == 1 };
-        Config { is_tty }
-    }
-}
-
-lazy_static! {
-    static ref C: Config = Config::new();
-}
-
-fn read_line(stdin: &mut dyn BufRead) -> Option<String> {
-    if C.is_tty {
+fn read_line(stdin: &mut dyn BufRead, is_tty: bool) -> Option<String> {
+    if is_tty {
         print!("> ");
         io::stdout().flush().unwrap();
     }
@@ -91,9 +71,11 @@ fn main() {
 
     env_logger::init();
     let mut stdin = BufReader::new(io::stdin());
+    let is_tty = unsafe { libc::isatty(libc::STDIN_FILENO) == 1 };
+    let mut c = Computor::new();
 
-    while let Some(line) = read_line(&mut stdin) {
-        let expr = parsing::parse(&line);
+    while let Some(line) = read_line(&mut stdin, is_tty) {
+        let expr = c.compute_line(&line);
         println!("{}", expr);
     }
 }
