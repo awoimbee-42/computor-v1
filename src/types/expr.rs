@@ -1,7 +1,7 @@
 use super::Num;
 use super::Term;
 use super::Value;
-use super::*;
+use super::operators::*;
 
 use log::debug;
 use std::collections::HashMap;

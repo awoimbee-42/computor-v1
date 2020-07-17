@@ -1,7 +1,6 @@
 use super::factor::Factor;
-use super::Num;
+use super::operators::*;
 use super::Value;
-use super::*;
 use log::debug;
 use std::fmt;
 

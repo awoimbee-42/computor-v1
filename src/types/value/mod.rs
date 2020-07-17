@@ -1,10 +1,12 @@
 mod num;
 mod var;
+mod expr;
 
 pub use num::Num;
 pub use var::Var;
 
-use super::*;
+use super::operators::*;
+use super::Expr;
 use log::debug;
 use std::cmp;
 use std::fmt;
@@ -31,11 +33,11 @@ impl super::Resolve for Value {
     fn resolve(&mut self) -> Option<Value> {
         debug!("resolve: {}", self);
         match self {
-            Self::Num(v) => (),
+            Self::Num(_) => (),
             Self::Expr(e) => {
                 e.resolve();
             }
-            _ => (), // TODO
+            _ => {eprintln!("TODO!!");}, // TODO
         };
         Some(self.clone())
     }
@@ -57,16 +59,16 @@ impl From<Var> for Value {
         Value::Var(val)
     }
 }
-// impl From<Expr> for Value {
-//     fn from(val: Expr) -> Self {
-//         Value::Expr(Box::new(val))
-//     }
-// }
-// impl From<Box<Expr>> for Value {
-//     fn from(val: Box<Expr>) -> Self {
-//         Value::Expr(val)
-//     }
-// }
+impl From<Expr> for Value {
+    fn from(val: Expr) -> Self {
+        Value::Expr(Box::new(val))
+    }
+}
+impl From<Box<Expr>> for Value {
+    fn from(val: Box<Expr>) -> Self {
+        Value::Expr(val)
+    }
+}
 
 macro_rules! for_any_value {
     ($matched:ident, $name:ident, $what:expr) => {
@@ -74,6 +76,7 @@ macro_rules! for_any_value {
             // Value::Group($name) => $what,
             Value::Var($name) => $what,
             Value::Num($name) => $what,
+            // Value::Expr($name) => $what,
             _ => panic!("Operations aren't implemented for this type ({})", $matched), // TODO !!
         }
     };

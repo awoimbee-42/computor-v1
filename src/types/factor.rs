@@ -1,7 +1,5 @@
-use super::value::Num;
-use super::value::Pow;
+use super::operators::*;
 use super::value::Value;
-use super::*;
 use std::fmt;
 
 use log::debug;
@@ -21,8 +19,8 @@ impl fmt::Display for Factor {
     }
 }
 
-impl<T: Into<Value>> From<T> for Factor {
-    fn from(val: T) -> Self {
+impl From<Value> for Factor {
+    fn from(val: Value) -> Self {
         Factor::Value(val.into())
     }
 }
