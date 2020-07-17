@@ -31,27 +31,44 @@ impl super::Resolve for Factor {
 
 	fn resolve(&mut self) -> Option<Self::Output> {
 		debug!("resolve: {}", self);
-		fn inner(s: &mut Factor) -> Option<Num> {
-			match s {
-				Factor::Value(v) => return v.resolve(),
-				Factor::Pow((v, f)) => {
-					let f = f.resolve();
-					let v = v.resolve();
-					if let Some(f) = f {
-						if f == 0 {
-							return Some(Num::from(0));
-						} else if let Some(n) = v {
-							return Some(n.clone().pow(f));
-						}
+		match self {
+			Self::Value(v) => return v.resolve(),
+			Self::Pow((a, b)) => {
+				let opt_a = a.resolve();
+				let opt_b = b.resolve();
+
+				if let Some(num_b) = &opt_b {
+					if *num_b == 0 {
+						let res = Num::from(1);
+						*self = Self::from(res.clone());
+						return Some(res);
+					}
+					if *num_b == 1 {
+						*self = Factor::from(a.clone());
+						return self.resolve();
+					}
+				}
+				if let Some(num_a) = &opt_a {
+					if *num_a == 0 {
+						let res = Num::from(0);
+						*self =  Self::from(res.clone());
+						return Some(res);
+					}
+					if *num_a == 1 {
+						let res = Num::from(1);
+						*self =  Self::from(res.clone());
+						return Some(res);
+					}
+				}
+				if let Some(num_b) = opt_b {
+					if let Some(num_a) = opt_a {
+						let res = num_a.clone().pow(num_b);
+						*self =  Self::from(res.clone());
+						return Some(res);
 					}
 				}
 			}
-			return None;
 		}
-		let res = inner(self);
-		if let Some(n) = &res {
-			*self = Self::Value(Value::from(n.clone()));
-		}
-		res
+		return None;
 	}
 }

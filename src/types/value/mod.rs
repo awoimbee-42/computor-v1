@@ -32,7 +32,8 @@ impl super::Resolve for Value {
 	fn resolve(&mut self) -> Option<Self::Output> {
         debug!("resolve: {}", self);
 		match self {
-			Self::Num(v) => return Some(v.clone()),
+            Self::Num(v) => Some(v.clone()),
+            Self::Expr(e) => e.resolve(),
             _ => None, // TODO
 		}
 	}

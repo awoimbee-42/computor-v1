@@ -29,8 +29,10 @@ impl Real {
     }
     fn simplify(mut self) -> Self {
         let common_factor = gcd(self.num, self.denum);
-        self.num /= common_factor;
-        self.denum /= common_factor;
+        if common_factor != 0 {
+            self.num /= common_factor;
+            self.denum /= common_factor;
+        }
         self
     }
 }
