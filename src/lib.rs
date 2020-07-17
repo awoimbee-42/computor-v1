@@ -4,6 +4,7 @@ mod types;
 use std::collections::HashMap;
 use types::Expr;
 use types::Num;
+use types::Resolve;
 
 pub struct Computor {
     vars: HashMap<String, Num>,
@@ -22,8 +23,9 @@ impl Computor {
     }
 
     pub fn compute_line(&mut self, line: &str) -> String {
-        parsing::parse(line);
-
+        let mut expr = parsing::parse(line);
+        expr.resolve();
+        println!("Expr: {}", expr);
         "".into()
     }
 }

@@ -10,12 +10,10 @@ pub use value::Value;
 pub use value::Num;
 pub use value::Var;
 
-use std::fmt;
-
 pub trait Resolve {
     type Output;
 
-    fn resolve(self) -> Result<Self::Output, Self> where Self: Sized;
+    fn resolve(&mut self) -> Option<Self::Output>;
 }
 
 // #[derive(Debug, Clone)]

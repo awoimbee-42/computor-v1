@@ -5,6 +5,7 @@ pub use var::Var;
 pub use num::Num;
 
 use std::fmt;
+use log::debug;
 use super::expr::Expr;
 
 #[derive(Debug, Clone)]
@@ -28,17 +29,11 @@ impl fmt::Display for Value {
 impl super::Resolve for Value {
 	type Output = Num;
 
-	fn resolve(self) -> Result<Self::Output, Self>
-	where Self: Sized {
+	fn resolve(&mut self) -> Option<Self::Output> {
+        debug!("resolve: {}", self);
 		match self {
-			Self::Value(v) => return Ok(v),
-			Self::Pow((v, f)) => {
-				if let Ok(f) = f.resolve() {
-					return Ok(v.pow(f));
-				} else {
-					return Err(self);
-				}
-			}
+			Self::Num(v) => return Some(v.clone()),
+            _ => None, // TODO
 		}
 	}
 }
@@ -49,9 +44,9 @@ pub trait Pow<T> {
     fn pow(self, rhs: T) -> Self::Output;
 }
 
-impl From<Num> for Value {
-    fn from(val: Num) -> Self {
-        Value::Num(val)
+impl<T: Into<Num>> From<T> for Value {
+    fn from(val: T) -> Self {
+        Value::Num(val.into())
     }
 }
 impl From<Var> for Value {
@@ -59,16 +54,16 @@ impl From<Var> for Value {
         Value::Var(val)
     }
 }
-impl From<Expr> for Value {
-    fn from(val: Expr) -> Self {
-        Value::Expr(Box::new(val))
-    }
-}
-impl From<Box<Expr>> for Value {
-    fn from(val: Box<Expr>) -> Self {
-        Value::Expr(val)
-    }
-}
+// impl From<Expr> for Value {
+//     fn from(val: Expr) -> Self {
+//         Value::Expr(Box::new(val))
+//     }
+// }
+// impl From<Box<Expr>> for Value {
+//     fn from(val: Box<Expr>) -> Self {
+//         Value::Expr(val)
+//     }
+// }
 
 
 // macro_rules! for_any_value {
