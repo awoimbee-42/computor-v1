@@ -6,11 +6,16 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "lcomputor"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bcomputor"
+path = "src/main.rs"
+
 [dependencies]
 clap = "2.33"
-libc = "0.2"
-lazy_static = "1.4"
-phf = { version = "0.8", features = ["macros"] }
 log = { version = "0.4", features = ["release_max_level_off"] }
 env_logger = { version = "0.7", default-features = false }
-lexical = "5.2"
+rustyline = "6.2"

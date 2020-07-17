@@ -1,5 +1,4 @@
 use crate::types::Group;
-use phf::phf_map;
 use std::error::Error;
 use std::fmt::{Debug, Display};
 
@@ -25,22 +24,6 @@ pub trait Operator: Debug + Sync + Display {
     // should operate return Option ?
     fn operate(&self, group: &mut Group, id: usize) -> Result<usize, Box<dyn Error>>;
 }
-// struct Op {
-//     trait: &'static dyn Operator,
-// }
-// pub trait MyTrait {}
-// pub struct MyStruct {
-//     my_trait: (dyn Operator + 'static),
-// }
-
-pub static ALL_OPERATORS: phf::Map<char, &'static dyn Operator> = phf_map! {
-    '+' => &Add,
-    '-' => &Sub,
-    '*' => &Mul,
-    '/' => &Div,
-    '^' => &Pow,
-    // '!' => Operator::new(3, Associativity::Left),
-};
 
 #[derive(Debug)]
 pub enum Associativity {

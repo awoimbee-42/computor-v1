@@ -29,8 +29,10 @@ impl Real {
     }
     fn simplify(mut self) -> Self {
         let common_factor = gcd(self.num, self.denum);
-        self.num /= common_factor;
-        self.denum /= common_factor;
+        if common_factor != 0 {
+            self.num /= common_factor;
+            self.denum /= common_factor;
+        }
         self
     }
 }
@@ -55,7 +57,7 @@ impl PartialEq for Real {
 impl PartialEq<Float> for Real {
     fn eq(&self, other: &Float) -> bool {
         let flt_self = Float::from(*self);
-        self == other
+        flt_self == *other
     }
 }
 
