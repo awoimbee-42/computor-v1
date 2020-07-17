@@ -43,9 +43,7 @@ pub fn lex<'a>(input: &'a str) -> Vec<LexItem<'a>> {
         } else {
             let start = index;
             index += 1;
-            while index < bytes.len()
-                && matches!(bytes[index], b'0'..=b'9' | b'e' | b'E' | b'.')
-            {
+            while index < bytes.len() && matches!(bytes[index], b'0'..=b'9' | b'e' | b'E' | b'.') {
                 index += 1
             }
             lexed.push(LexItem::Val(&input[start..index]));

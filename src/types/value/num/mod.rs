@@ -98,7 +98,7 @@ impl ops::Div<Num> for Num {
     }
 }
 
-impl super::super::Pow<Num> for Num {
+impl super::Pow<Num> for Num {
     type Output = Num;
 
     fn pow(self, rhs: Num) -> Self::Output {

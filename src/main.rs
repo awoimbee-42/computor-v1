@@ -3,7 +3,6 @@
 #![feature(box_patterns)]
 use clap::clap_app;
 
-use log::debug;
 use std::io::prelude::*;
 use std::io::{self, BufReader};
 
