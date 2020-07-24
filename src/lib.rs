@@ -27,6 +27,7 @@ impl Computor {
     pub fn compute_line(&mut self, line: &str) -> String {
         let mut expr = parsing::parse(line);
         expr.resolve();
+        println!("Expr: {:?}", expr);
         println!("Expr: {}", expr);
         "".into()
     }
