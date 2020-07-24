@@ -1,12 +1,13 @@
+mod expr;
 mod num;
 mod var;
-mod expr;
 
 pub use num::Num;
 pub use var::Var;
 
 use super::operators::*;
 use super::Expr;
+use crate::uniq_resolve;
 use log::debug;
 use std::cmp;
 use std::fmt;
@@ -33,13 +34,13 @@ impl super::Resolve for Value {
     fn resolve(&mut self) -> Option<Value> {
         debug!("resolve: {}", self);
         match self {
-            Self::Num(_) => (),
-            Self::Expr(e) => {
-                e.resolve();
-            }
-            _ => {eprintln!("TODO!!");}, // TODO
-        };
-        Some(self.clone())
+            Self::Num(_) => Some(self.clone()),
+            Self::Expr(e) => uniq_resolve!(self, e),
+            _ => {
+                eprintln!("TODO!!");
+                Some(self.clone())
+            } // TODO
+        }
     }
 }
 
@@ -76,8 +77,8 @@ macro_rules! for_any_value {
             // Value::Group($name) => $what,
             Value::Var($name) => $what,
             Value::Num($name) => $what,
-            // Value::Expr($name) => $what,
-            _ => panic!("Operations aren't implemented for this type ({})", $matched), // TODO !!
+            Value::Expr(box $name) => $what,
+            // _ => panic!("Operations aren't implemented for this type ({})", $matched), // TODO !!
         }
     };
 }

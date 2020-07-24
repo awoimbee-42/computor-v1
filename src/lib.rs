@@ -1,3 +1,5 @@
+#![feature(box_patterns)]
+
 mod parsing;
 mod types;
 

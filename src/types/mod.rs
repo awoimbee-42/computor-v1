@@ -1,8 +1,8 @@
 pub mod expr;
 pub mod factor;
+mod operators;
 pub mod term;
 pub mod value;
-mod operators;
 
 pub use expr::Expr;
 pub use factor::Factor;
@@ -21,3 +21,14 @@ pub trait Resolve {
 //     vars: Vec<Value>,
 //     inner: Group,
 // }
+
+#[macro_export]
+macro_rules! uniq_resolve {
+    ($self:ident, $value:ident) => {{
+        let mut opt_v = $value.resolve();
+        if let Some(new_v) = &opt_v {
+            *$self = Self::from(new_v.clone());
+        }
+        opt_v
+    }};
+}

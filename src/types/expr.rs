@@ -2,6 +2,7 @@ use super::Num;
 use super::Term;
 use super::Value;
 use super::operators::*;
+use crate::uniq_resolve;
 
 use log::debug;
 use std::collections::HashMap;
@@ -88,7 +89,7 @@ impl super::Resolve for ExprInner {
     fn resolve(&mut self) -> Option<Value> {
         debug!("resolve: {}", self);
         match self {
-            Self::Term(t) => t.resolve(),
+            Self::Term(t) => uniq_resolve!(self, t),
             Self::Add((a, b)) | Self::Sub((a, b)) => {
                 let a = a.resolve();
                 let b = b.resolve();

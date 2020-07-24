@@ -1,6 +1,7 @@
 use super::factor::Factor;
 use super::operators::*;
 use super::Value;
+use crate::uniq_resolve;
 use log::debug;
 use std::fmt;
 
@@ -30,7 +31,7 @@ impl super::Resolve for Term {
     fn resolve(&mut self) -> Option<Value> {
         debug!("resolve: {}", self);
         match self {
-            Self::Factor(v) => v.resolve(),
+            Self::Factor(v) => uniq_resolve!(self, v),
             Self::Div((v0, v1)) | Self::Mul((v0, v1)) => {
                 // TODO: handle mul & div of Expr
                 let v0 = v0.resolve();

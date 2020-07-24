@@ -1,5 +1,6 @@
 use super::operators::*;
 use super::value::Value;
+use crate::uniq_resolve;
 use std::fmt;
 
 use log::debug;
@@ -29,7 +30,7 @@ impl super::Resolve for Factor {
     fn resolve(&mut self) -> Option<Value> {
         debug!("resolve: {}", self);
         match self {
-            Self::Value(v) => return v.resolve(),
+            Self::Value(v) => return uniq_resolve!(self, v),
             Self::Pow((a, b)) => {
                 let opt_a = a.resolve();
                 let opt_b = b.resolve();
