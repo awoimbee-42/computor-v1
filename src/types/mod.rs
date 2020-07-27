@@ -25,7 +25,7 @@ pub trait Resolve {
 #[macro_export]
 macro_rules! uniq_resolve {
     ($self:ident, $value:ident) => {{
-        let mut opt_v = $value.resolve();
+        let opt_v = $value.resolve();
         if let Some(new_v) = &opt_v {
             *$self = Self::from(new_v.clone());
         }
