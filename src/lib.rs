@@ -1,4 +1,5 @@
 #![feature(box_patterns)]
+#![feature(peekable_next_if)]
 
 mod parsing;
 mod types;
@@ -25,7 +26,10 @@ impl Computor {
     }
 
     pub fn compute_line(&mut self, line: &str) -> String {
-        let mut expr = parsing::parse(line);
+        let mut expr = match parsing::parse(line) {
+            Some(e) => e,
+            None => return "".into(),
+        };
         expr.resolve();
         println!("Expr: {:?}", expr);
         println!("Expr: {}", expr);

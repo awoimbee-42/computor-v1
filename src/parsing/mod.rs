@@ -128,13 +128,26 @@ where
 
 //////////////////////////////////////////////////////////////////////////////////
 
-pub fn parse(input: &str) -> Expr {
+pub fn parse(input: &str) -> Option<Expr> {
     debug!("Parse: {}", input);
-    let lexed = lex(input);
+    let lexed = match lex(input) {
+        Err(e) => {
+            println!("Error (l): {}", e);
+            return None;
+        }
+        Ok(l) => l,
+    };
     debug!("Lexed: {:?}", lexed);
-    let parsed = parse_expr(&mut lexed.iter().peekable()).unwrap();
-    debug!("Parsed: {:?}", parsed);
-    parsed
+    match parse_expr(&mut lexed.iter().peekable()) {
+        Ok(parsed) => {
+            debug!("Parsed: {:?}", parsed);
+            Some(parsed)
+        }
+        Err(e) => {
+            println!("Error (p): {}", e);
+            None
+        }
+    }
 }
 
 fn parse_number(txt: &str) -> Option<Num> {

@@ -7,6 +7,118 @@ pub enum LexItem<'a> {
     Val(&'a str),
 }
 
+use std::str::Chars;
+#[derive(Clone)]
+struct PeekableChars<'a> {
+    txt: &'a str,
+    chars: Chars<'a>,
+    curr: Option<char>,
+}
+
+impl<'a> PeekableChars<'a> {
+    pub fn peek(&mut self) -> Option<&char> {
+        self.curr.as_ref()
+    }
+    pub fn next(&mut self) -> Option<char> {
+        let tmp = self.curr;
+        self.txt = self.chars.as_str();
+        self.curr = self.chars.next();
+        tmp
+    }
+    pub fn nth(&mut self, n: usize) -> Option<char> {
+        let mut res = self.curr;
+        for _ in 0..=n {
+            res = self.next();
+        }
+        res
+    }
+    pub fn as_str(&self) -> &'a str {
+        self.txt
+    }
+}
+impl<'a> From<Chars<'a>> for PeekableChars<'a> {
+    fn from(mut c: Chars<'a>) -> Self {
+        Self {
+            txt: c.as_str(),
+            curr: c.next(),
+            chars: c,
+        }
+    }
+}
+
+mod tests {
+    use super::*;
+    const TEST_TXT: &str = "this is a test string";
+
+    #[test]
+    fn test_peekable_char_next() {
+        let mut pc = PeekableChars::from(TEST_TXT.chars());
+        assert_eq!(pc.next(), Some('t'));
+        assert_eq!(pc.next(), Some('h'));
+        assert_eq!(pc.next(), Some('i'));
+        assert_eq!(pc.next(), Some('s'));
+        assert_eq!(pc.as_str(), &TEST_TXT[4..]);
+        assert_eq!(pc.peek(), Some(&' '));
+    }
+    #[test]
+    fn test_peekable_char_nth() {
+        let mut pc = PeekableChars::from(TEST_TXT.chars());
+        assert_eq!(pc.nth(5), Some('i'));
+        assert_eq!(pc.as_str(), &TEST_TXT[6..]);
+        assert_eq!(pc.peek(), Some(&'s'));
+    }
+}
+
+pub fn lex<'a>(input: &'a str) -> Result<Vec<LexItem<'a>>, String> {
+    let mut lexed = Vec::new();
+    let mut chars = PeekableChars::from(input.chars());
+
+    while chars.peek().is_some() {
+        if eat_whitespace(&mut chars) {
+            return Err(format!("Value expected: {}", chars.as_str()));
+        }
+        if chars.peek().unwrap_or(&'a') == &'(' {
+            let end = find_matching_prenthese(chars.as_str()).unwrap();
+            let inside_par = &chars.as_str()[1..end];
+            let inner_lexed = match lex(inside_par) {
+                e @ Err(_) => return e,
+                Ok(l) => l,
+            };
+            lexed.push(LexItem::Paren(inner_lexed));
+            chars.nth(end);
+        } else {
+            let mut len = 0;
+            let mut c2 = chars.clone();
+            loop {
+                match c2.next() {
+                    Some(c) if c.is_alphanumeric() => len += c.len_utf8(),
+                    _ => break,
+                };
+            }
+            if len == 0 {
+                return Err(format!("number needed here: {}", chars.as_str()));
+            }
+            lexed.push(LexItem::Val(&chars.as_str()[..len]));
+            chars.nth(len - 1);
+        }
+        if eat_whitespace(&mut chars) {
+            break;
+        }
+        let op_len = if chars.as_str().starts_with("**") {
+            2
+        } else {
+            1
+        };
+        let op = {
+            let tmp = &chars.txt[..op_len];
+            chars.nth(op_len - 1);
+            tmp
+        };
+        lexed.push(LexItem::Op(op));
+    }
+    Ok(lexed)
+}
+
 fn find_matching_prenthese(slice: &str) -> Result<usize, Box<dyn Error>> {
     let mut count = 0;
     for (_i, c) in slice.as_bytes().iter().enumerate() {
@@ -23,43 +135,12 @@ fn find_matching_prenthese(slice: &str) -> Result<usize, Box<dyn Error>> {
     Err("No matching closing parenthese".into())
 }
 
-fn eat_whitespace(index: &mut usize, bytes: &[u8]) {
-    while *index < bytes.len() && bytes[*index] <= b' ' {
-        *index += 1
-    }
-}
-pub fn lex<'a>(input: &'a str) -> Vec<LexItem<'a>> {
-    let mut lexed = Vec::new();
-
-    let bytes = input.as_bytes();
-    let mut index = 0;
-    while index < bytes.len() {
-        eat_whitespace(&mut index, bytes);
-        if matches!(bytes[index], b'(') {
-            let end = index + find_matching_prenthese(&input[index..]).unwrap();
-            let inside_par = &input[index + 1..end];
-            lexed.push(LexItem::Paren(lex(inside_par)));
-            index = end + 1;
-        } else {
-            let start = index;
-            index += 1;
-            while index < bytes.len() && matches!(bytes[index], b'0'..=b'9' | b'e' | b'E' | b'.') {
-                index += 1
-            }
-            lexed.push(LexItem::Val(&input[start..index]));
-        }
-        eat_whitespace(&mut index, bytes);
-        if index == bytes.len() {
-            break;
+fn eat_whitespace(chars: &mut PeekableChars) -> bool {
+    loop {
+        match chars.peek() {
+            None => return true,
+            Some(c) if !c.is_whitespace() => return false,
+            _ => chars.next(),
         };
-        let op = if bytes[index] == b'*' && bytes[index + 1] == b'*' {
-            index += 2;
-            &input[index - 2..index]
-        } else {
-            index += 1;
-            &input[index - 1..index]
-        };
-        lexed.push(LexItem::Op(op));
     }
-    lexed
 }

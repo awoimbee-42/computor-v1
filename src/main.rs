@@ -1,6 +1,7 @@
 // TEMPORARY
 #![allow(dead_code)]
 #![feature(box_patterns)]
+#![feature(peekable_next_if)]
 use clap::{App, Arg};
 
 use lcomputor::Computor;
