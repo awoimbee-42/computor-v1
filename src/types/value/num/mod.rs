@@ -108,31 +108,35 @@ impl super::Pow<Num> for Num {
 /*################################## TRY OP ##################################*/
 impl TryAdd<Num> for Num {
     type Output = Num;
-    fn try_add(self, rhs: Num) -> Option<Self::Output> {
-        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0 + v1))))
+    fn try_add(&mut self, rhs: &mut Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(*v0 + *v1))))
     }
 }
 impl TrySub<Num> for Num {
     type Output = Num;
-    fn try_sub(self, rhs: Num) -> Option<Self::Output> {
-        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0 - v1))))
+    fn try_sub(&mut self, rhs: &mut Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(*v0 - *v1))))
     }
 }
 impl TryMul<Num> for Num {
     type Output = Num;
-    fn try_mul(self, rhs: Num) -> Option<Self::Output> {
-        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0 * v1))))
+    fn try_mul(&mut self, rhs: &mut Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(*v0 * *v1))))
     }
 }
 impl TryDiv<Num> for Num {
     type Output = Num;
-    fn try_div(self, rhs: Num) -> Option<Self::Output> {
-        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0 / v1))))
+    fn try_div(&mut self, rhs: &mut Num) -> Option<Self::Output> {
+        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(*v0 / *v1))))
     }
 }
 impl TryPow<Num> for Num {
     type Output = Num;
-    fn try_pow(self, rhs: Num) -> Option<Self::Output> {
-        for_any_num!(self, v0, for_any_num!(rhs, v1, Some(Num::from(v0.pow(v1)))))
+    fn try_pow(&mut self, rhs: &mut Num) -> Option<Self::Output> {
+        for_any_num!(
+            self,
+            v0,
+            for_any_num!(rhs, v1, Some(Num::from(v0.pow(*v1))))
+        )
     }
 }

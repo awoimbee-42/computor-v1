@@ -37,17 +37,17 @@ impl super::Resolve for Term {
                 let v0 = v0.resolve();
                 let v1 = v1.resolve();
                 debug!("v1: {:?} v0: {:?}", v1, v0);
-                let v0 = match v0 {
+                let mut v0 = match v0 {
                     Some(v) => v,
                     None => return None,
                 };
-                let v1 = match v1 {
+                let mut v1 = match v1 {
                     Some(v) => v,
                     None => return None,
                 };
                 let res = match self {
-                    Self::Div(_) => v0.try_div(v1),
-                    Self::Mul(_) => v0.try_mul(v1),
+                    Self::Div(_) => v0.try_div(&mut v1),
+                    Self::Mul(_) => v0.try_mul(&mut v1),
                     _ => unreachable!(),
                 };
                 if let Some(v) = &res {

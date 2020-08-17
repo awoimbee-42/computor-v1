@@ -58,9 +58,9 @@ impl super::Resolve for Factor {
                         return Some(res);
                     }
                 }
-                if let Some(num_b) = opt_b {
-                    if let Some(num_a) = opt_a {
-                        let res = num_a.clone().try_pow(num_b);
+                if let Some(mut num_b) = opt_b {
+                    if let Some(mut num_a) = opt_a {
+                        let res = num_a.try_pow(&mut num_b);
                         if let Some(v) = &res {
                             *self = Self::from(v.clone());
                         }

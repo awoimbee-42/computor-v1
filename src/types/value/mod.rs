@@ -94,7 +94,7 @@ impl<T: Into<Value> + Clone> cmp::PartialEq<T> for Value {
 
 impl TryAdd<Value> for Value {
     type Output = Value;
-    fn try_add(self, rhs: Value) -> Option<Self::Output> {
+    fn try_add(&mut self, rhs: &mut Value) -> Option<Self::Output> {
         for_any_value!(
             self,
             v0,
@@ -104,7 +104,7 @@ impl TryAdd<Value> for Value {
 }
 impl TrySub<Value> for Value {
     type Output = Value;
-    fn try_sub(self, rhs: Value) -> Option<Self::Output> {
+    fn try_sub(&mut self, rhs: &mut Value) -> Option<Self::Output> {
         for_any_value!(
             self,
             v0,
@@ -114,7 +114,7 @@ impl TrySub<Value> for Value {
 }
 impl TryMul<Value> for Value {
     type Output = Value;
-    fn try_mul(self, rhs: Value) -> Option<Self::Output> {
+    fn try_mul(&mut self, rhs: &mut Value) -> Option<Self::Output> {
         for_any_value!(
             self,
             v0,
@@ -124,7 +124,7 @@ impl TryMul<Value> for Value {
 }
 impl TryDiv<Value> for Value {
     type Output = Value;
-    fn try_div(self, rhs: Value) -> Option<Self::Output> {
+    fn try_div(&mut self, rhs: &mut Value) -> Option<Self::Output> {
         for_any_value!(
             self,
             v0,
@@ -134,7 +134,7 @@ impl TryDiv<Value> for Value {
 }
 impl TryPow<Value> for Value {
     type Output = Value;
-    fn try_pow(self, rhs: Value) -> Option<Self::Output> {
+    fn try_pow(&mut self, rhs: &mut Value) -> Option<Self::Output> {
         for_any_value!(
             self,
             v0,
