@@ -69,16 +69,16 @@ mod tests {
     }
 }
 
-pub fn lex<'a>(input: &'a str) -> Result<Vec<LexItem<'a>>, String> {
+pub fn lex<'a>(input: &'a str) -> Result<Vec<LexItem<'a>>, Box<dyn Error>> {
     let mut lexed = Vec::new();
     let mut chars = PeekableChars::from(input.chars());
 
     while chars.peek().is_some() {
         if eat_whitespace(&mut chars) {
-            return Err(format!("Value expected: {}", chars.as_str()));
+            return Err(format!("Value expected: {}", chars.as_str()).into());
         }
         if chars.peek().unwrap_or(&'a') == &'(' {
-            let end = find_matching_prenthese(chars.as_str()).unwrap();
+            let end = find_matching_prenthese(chars.as_str())?;
             let inside_par = &chars.as_str()[1..end];
             let inner_lexed = match lex(inside_par) {
                 e @ Err(_) => return e,
@@ -87,19 +87,19 @@ pub fn lex<'a>(input: &'a str) -> Result<Vec<LexItem<'a>>, String> {
             lexed.push(LexItem::Paren(inner_lexed));
             chars.nth(end);
         } else {
+            let chars_old = chars.clone();
             let mut len = 0;
-            let mut c2 = chars.clone();
             loop {
-                match c2.next() {
+                match chars.peek() {
                     Some(c) if c.is_alphanumeric() => len += c.len_utf8(),
                     _ => break,
                 };
+                chars.next();
             }
             if len == 0 {
-                return Err(format!("number needed here: {}", chars.as_str()));
+                return Err(format!("number needed here: {}", chars_old.as_str()).into());
             }
-            lexed.push(LexItem::Val(&chars.as_str()[..len]));
-            chars.nth(len - 1);
+            lexed.push(LexItem::Val(&chars_old.as_str()[..len]));
         }
         if eat_whitespace(&mut chars) {
             break;
@@ -132,7 +132,7 @@ fn find_matching_prenthese(slice: &str) -> Result<usize, Box<dyn Error>> {
             return Ok(c as usize - slice.as_ptr() as usize);
         }
     }
-    Err("No matching closing parenthese".into())
+    Err(format!("No matching closing parenthese: `{}`", slice).into())
 }
 
 fn eat_whitespace(chars: &mut PeekableChars) -> bool {

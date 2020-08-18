@@ -164,11 +164,13 @@ fn parse_number(txt: &str) -> Option<Num> {
 
 fn parse_var(txt: &str) -> Option<Var> {
     let mut len = 0;
-    for c in txt.as_bytes() {
-        if !matches!(c, b'A'..=b'Z' | b'a'..=b'z') {
-            break;
-        };
-        len += 1;
+    {
+        for c in txt.chars() {
+            if !c.is_alphanumeric() {
+                break;
+            };
+            len += c.len_utf8();
+        }
     }
     if len == 0 {
         return None;
